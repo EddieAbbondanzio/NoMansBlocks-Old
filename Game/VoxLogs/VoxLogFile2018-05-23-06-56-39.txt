@@ -1,0 +1,15 @@
+6:56:24 AM: VoxelatedEngine: Starting...
+6:56:24 AM: Thread Manager: Started 4 threads.
+6:56:24 AM: Socket bound to 0.0.0.0:59037: True
+6:56:24 AM: Network thread started
+6:56:24 AM: NetClientManager: Connecting to server at + 127.0.0.1:14242
+6:56:24 AM: Initiated average roundtrip time to 0.00 ms Remote time is: 31.0629997253418
+6:56:24 AM: Player count is 2
+6:56:24 AM: LobbySyncMessage: (NetPlayer) Id: 0 Name: Bert Color: Spectator
+6:56:24 AM: NetLobby: Lobby Message recieved of type: LobbySync
+6:56:24 AM: NetLobby: Joined lobby of size: 2. Player id is: 1
+6:56:38 AM: NetClientManager: Disconnecting from server.
+6:56:38 AM: Thread Manager: Stopped 4 threads.
+6:56:38 AM: Shutdown requested
+6:56:38 AM: VoxelatedEngine: Stopping...
+6:56:39 AM: Saving log file
