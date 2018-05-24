@@ -55,13 +55,13 @@ namespace Voxelated.Network.Lobby {
         /// <summary>
         /// Create a new lobby.
         /// </summary>
-        public NetLobby() {
-            this.netManager = VoxelatedEngine.Engine.NetManager;
+        public NetLobby(NetManager netManager) {
+            this.netManager = netManager;
 
             //Create the new members
             localPlayer = null;
             Players      = new List<NetPlayer>();
-            chatMessager = new NetChatMessager();
+            chatMessager = new NetChatMessager(netManager);
 
             NetManager.OnLobbyMessage      += OnLobbyMessage;
             NetManager.OnConnectionMessage += OnConnectionMessage;

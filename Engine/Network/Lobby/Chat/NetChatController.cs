@@ -17,21 +17,16 @@ namespace Voxelated.Network.Lobby {
         /// Cached reference to the network manager.
         /// </summary>
         private NetServerManager serverManager;
-        #endregion
+        #endregion 
 
         #region Constructor(s)
         /// <summary>
         /// Create a new chat handler for communicating with
         /// the other players in the lobby.
         /// </summary>
-        public NetChatController() {
-            if (!VoxelatedEngine.Engine.NetManager.IsServer) {
-                throw new Exception("Only a server can have a NetChatController");
-            }
-
-            serverManager = VoxelatedEngine.Engine.NetManager as NetServerManager;
+        public NetChatController(NetServerManager serverManager) {
+            this.serverManager = serverManager;
         }
-
         #endregion
 
         #region Publics

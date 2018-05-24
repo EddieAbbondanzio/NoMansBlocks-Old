@@ -41,7 +41,7 @@ namespace Voxelated.Network {
         /// <param name="serverSettings">The settings for the server to adhere to.</param>
         public NetServerManager(NetServerSettings serverSettings) : base(NetPermissions.Server) {
             Settings = serverSettings;
-            ClientManager = new NetClientConnectionManager();
+            ClientManager = new NetClientConnectionManager(this);
         }
         #endregion
 

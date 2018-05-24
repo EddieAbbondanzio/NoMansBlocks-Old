@@ -41,12 +41,8 @@ namespace Voxelated.Network {
         /// The server uses this to track client connections,
         /// approve new ones, and kick others.
         /// </summary>
-        public NetClientConnectionManager() {
-            if (!VoxelatedEngine.Engine.NetManager.IsServer) {
-                throw new Exception("Only a server can have a net client manager.");
-            }
-
-            serverManager = VoxelatedEngine.Engine.NetManager as NetServerManager;
+        public NetClientConnectionManager(NetServerManager serverManager) {
+            this.serverManager = serverManager;
             clientConnections = new NetClientConnectionList();
 
             //Fill the queue

@@ -75,7 +75,7 @@ namespace Voxelated.Network {
         /// <param name="permissions">The permissions level the manager has.</param>
         public NetManager(NetPermissions permissions) {
             Permissions = permissions;
-            Lobby = new NetLobby();
+            Lobby = new NetLobby(this);
         }
         #endregion
 

@@ -33,9 +33,9 @@ namespace Voxelated.Network.Lobby {
         /// message that can send out and recieve chat
         /// messages over the network.
         /// </summary>
-        public NetChatMessager() {
-            if (VoxelatedEngine.Engine.NetManager.IsServer) {
-                chatController = new NetChatController();
+        public NetChatMessager(NetManager netManager) {
+            if (netManager.IsServer) {
+                chatController = new NetChatController(netManager as NetServerManager);
             }
 
             NetManager.OnChatMessage += OnChatMessage;
