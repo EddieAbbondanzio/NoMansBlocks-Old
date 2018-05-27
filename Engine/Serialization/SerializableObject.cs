@@ -113,7 +113,7 @@ namespace Voxelated.Serialization {
             }
 
             //Prep the byte buffer to read from.
-            int bitCount = GetByteCount(bytes, startBit) * 8;
+            int bitCount = GetByteCount(bytes, startBit) * 8 ;
             return new ByteBuffer(bytes, startBit + 32, bitCount);
         }
         #endregion

@@ -50,11 +50,7 @@ namespace NoMansBlocks {
         private void Update() {
             if (sendMessage) {
                 NetManager netManager = VoxelatedEngine.Engine.NetManager;
-
-                LobbyChatMessage chatMsg = new LobbyChatMessage("BERT", text);
-                text = "";
-
-                netManager.SendMessage(chatMsg, Lidgren.Network.NetDeliveryMethod.ReliableOrdered, NetChannel.Chat);
+                netManager.Lobby.ChatMessager.SendLobbyChatMessage(text ?? "");
 
                 sendMessage = false;
             }

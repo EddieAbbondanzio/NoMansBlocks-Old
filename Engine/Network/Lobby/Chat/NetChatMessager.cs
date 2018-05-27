@@ -60,33 +60,28 @@ namespace Voxelated.Network.Lobby {
                 case NetMessageType.LobbyChat:
                     LobbyChatMessage lobbyMsg = e.Message as LobbyChatMessage;
 
-                    //Server needs to validate message
-                    if(chatController?.ValidateLobbyChatMessage(lobbyMsg) ?? false) {
-                        chatController.SendOutLobbyChatMessage(lobbyMsg);
+                    if (chatController == null) {
+                        LoggerUtils.Log(lobbyMsg.ToString());
                     }
-                    else {
-                        return;
+                    else if (chatController.ValidateLobbyChatMessage(lobbyMsg)) {
+                        chatController.SendOutLobbyChatMessage(lobbyMsg);
+                        LoggerUtils.Log(lobbyMsg.ToString());
                     }
 
-                    //Everyone prints message to screen.
-                    DisplayMessage(lobbyMsg.SenderName, lobbyMsg.Message);
                     break;
 
                 case NetMessageType.TeamChat:
                     TeamChatMessage teamMsg = e.Message as TeamChatMessage;
-
-                    //Server needs to validate
-                    if(chatController?.ValidateTeamChatMessage(teamMsg) ?? false) {
+                    
+                    if(chatController == null) {
+                        LoggerUtils.Log(teamMsg.ToString());
+                    }
+                    else if(chatController.ValidateTeamChatMessage(teamMsg)) {
                         chatController.SendOutTeamChatMessage(teamMsg);
-                    }
-                    else {
-                        return;
+                        LoggerUtils.Log(teamMsg.ToString());
                     }
 
-                    //Everyone prints message to screen.
-                    DisplayMessage(teamMsg.SenderName, teamMsg.Message);
                     break;
-
             }
         }
         #endregion
@@ -136,17 +131,6 @@ namespace Voxelated.Network.Lobby {
 
             TeamChatMessage teamMsg = new TeamChatMessage(Team, ChatName, message);
             VoxelatedEngine.Engine.NetManager.SendMessage(teamMsg, Lidgren.Network.NetDeliveryMethod.ReliableOrdered, NetChannel.Chat);
-        }
-        #endregion
-
-        #region Helpers
-        /// <summary>
-        /// Display a chat message to the local user.
-        /// </summary>
-        /// <param name="senderName">The name of who sent it.</param>
-        /// <param name="message">The message they sent.</param>
-        private void DisplayMessage(string senderName, string message) {
-            LoggerUtils.Log(senderName + ": " + message);
         }
         #endregion
     }

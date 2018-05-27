@@ -33,6 +33,17 @@ namespace Voxelated.Network {
         /// this can be null if it's a debug or info message.
         /// </summary>
         public NetConnection SenderConnection { get; protected set; }
+
+        /// <summary>
+        /// If the message was recieved from over the network.
+        /// </summary>
+        public bool IsIncoming { get; private set; }
+
+        /// <summary>
+        /// The time according to server time that the message
+        /// was recieved at.
+        /// </summary>
+        public double RecievedTime { get; private set; }
         #endregion
 
         #region Members
@@ -73,18 +84,24 @@ namespace Voxelated.Network {
         /// Create a new incoming message that has a payload.
         /// </summary>
         /// <param name="inMsg">The lidgren message with the data in it.</param>
-        protected NetMessage(NetIncomingMessage inMsg) {
+        /// <param name="isReadOnly">If the message can be written to.</param>
+        protected NetMessage(NetIncomingMessage inMsg, bool isReadOnly = true) {
             if (inMsg.SenderConnection != null) {
                 SenderConnection = inMsg.SenderConnection;
             }
 
             if(inMsg.MessageType == NetIncomingMessageType.Data) {
-                int byteCount = inMsg.ReadInt32();
+                //Get the header bytes. Then figure out how big the message is.
+                byte[] headerBytes = inMsg.PeekBytes(5);
+                int byteCount = SerializeUtils.GetInt(headerBytes, 8);
 
-                //We read 5 less bytes since message type, and byte count have already been
-                //read out.
-                buffer = new ByteBuffer(inMsg.ReadBytes(byteCount - 5));
+                //Pull in the message info, then jump past header.
+                //This allows for re-use when resending out messages.
+                buffer = new ByteBuffer(inMsg.ReadBytes(byteCount));
+                buffer.SetPointerIndex(40);
             }
+
+            IsIncoming = true;
         }
         #endregion
 
@@ -95,11 +112,14 @@ namespace Voxelated.Network {
         /// </summary>
         /// <returns>The encoded message</returns>
         public byte[] Serialize() {
-            //Jump back to the header and write how many bytes are in it.
-            buffer.SetPointerIndex(8);
-            buffer.Write(buffer.ByteLength);
-            return buffer.Serialize();
+            //If it's an outgoing message, jump back to the header and
+            //write the size.
+            if (!IsIncoming) {
+                buffer.SetPointerIndex(8);
+                buffer.Write(buffer.ByteLength);
+            }
 
+            return buffer.Serialize();
         }
         #endregion
 
@@ -204,7 +224,7 @@ namespace Voxelated.Network {
             }
 
             //Pull in header info.
-            NetMessageType msgType = (NetMessageType)inMsg.ReadByte();
+            NetMessageType msgType = (NetMessageType)inMsg.PeekByte();
             switch (msgType) {
                 case NetMessageType.LobbyChat:
                     return new LobbyChatMessage(inMsg);

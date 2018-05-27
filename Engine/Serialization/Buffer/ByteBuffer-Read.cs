@@ -236,6 +236,10 @@ namespace Voxelated.Serialization {
                 case SerializableType.NetTeam:
                     obj = new NetTeam(this);
                     break;
+
+                case SerializableType.NetLobbySettings:
+                    obj = new NetLobbySettings(this);
+                    break;
             }
 
             return obj;

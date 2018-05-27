@@ -85,11 +85,11 @@ namespace Voxelated.Serialization {
         /// </summary>
         /// <param name="bytes">The byte array to convert
         /// into the byte buffer.</param>
-        public ByteBuffer(byte[] bytes) {
+        public ByteBuffer(byte[] bytes, bool readOnly = true) {
             this.bytes = bytes;
             currentIndex = 0;
             currentLength = bytes.Length * 8;
-            IsReadOnly = true;
+            IsReadOnly = readOnly;
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Voxelated.Serialization {
         /// <param name="bitLength">How many bits long it is.</param>
         public ByteBuffer(byte[] bytes, int startBit, int bitLength) {
             this.bytes = SerializeUtils.GetBytes(bytes, startBit, bitLength);
-            currentIndex = startBit;
+            currentIndex = 0;
             currentLength = bitLength;
             IsReadOnly = true;
         }

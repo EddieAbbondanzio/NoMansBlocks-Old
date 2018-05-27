@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Voxelated.Network.Lobby;
+using Voxelated.Network.Lobby.Match;
 using Voxelated.Utilities;
 
 namespace Voxelated.Network.Messages {
@@ -38,11 +39,6 @@ namespace Voxelated.Network.Messages {
         /// lobby.
         /// </summary>
         public List<NetPlayer> Players { get; private set; }
-
-        /// <summary>
-        /// The game mode of the lobby.
-        /// </summary>
-        public IGameMode GameMode { get; private set; }
         #endregion
 
         #region Constructor(s)

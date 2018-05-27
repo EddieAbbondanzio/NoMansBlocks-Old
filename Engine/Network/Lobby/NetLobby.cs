@@ -26,11 +26,16 @@ namespace Voxelated.Network.Lobby {
         public List<NetPlayer> Players { get; private set; }
 
         /// <summary>
-        /// The current state of the lobby. Container
-        /// for various things such as time left if there
-        /// is a match and more.
+        /// The chat interface of the lobby. Handles sending out
+        /// and recieving messages between players.
         /// </summary>
-        public NetLobbyState State { get; private set; }
+        public NetChatMessager ChatMessager { get; private set; }
+
+        /// <summary>
+        /// The various settings of the lobby such as intermission
+        /// time and more.
+        /// </summary>
+        public NetLobbySettings Settings { get; private set; }
         #endregion
 
         #region Members
@@ -44,11 +49,6 @@ namespace Voxelated.Network.Lobby {
         /// Cached reference to the network manager of the engine.
         /// </summary>
         private NetManager netManager;
-
-        /// <summary>
-        /// Handles sending out and recieving chat messages.
-        /// </summary>
-        private NetChatMessager chatMessager;
         #endregion
 
         #region Constructor(s)
@@ -61,12 +61,11 @@ namespace Voxelated.Network.Lobby {
             //Create the new members
             localPlayer = null;
             Players      = new List<NetPlayer>();
-            chatMessager = new NetChatMessager(netManager);
+            ChatMessager = new NetChatMessager(netManager);
 
             NetManager.OnLobbyMessage      += OnLobbyMessage;
             NetManager.OnConnectionMessage += OnConnectionMessage;
         }
-
 
         /// <summary>
         /// Called when the resouces are released. Removes the event 
@@ -94,7 +93,7 @@ namespace Voxelated.Network.Lobby {
                     if(syncMessage != null) {
                         Players = syncMessage.Players;
                         localPlayer = Players.Find(p => p.Id == syncMessage.PlayerId);
-                        chatMessager.SetChatName(localPlayer.NickName);
+                        ChatMessager.SetChatName(localPlayer.NickName);
                     }
                     break;
 

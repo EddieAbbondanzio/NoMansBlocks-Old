@@ -15,7 +15,7 @@ namespace Voxelated.Network {
         /// <summary>
         /// The name to use for the players nickname
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; private set; } = string.Empty;
         #endregion
 
         #region Constructor(s)

@@ -53,5 +53,23 @@ namespace Voxelated.Utilities {
             return r.IsMatch(input);
         }
         #endregion
+
+        #region Clamps
+        /// <summary>
+        /// Ensure a string is never longer than the length, but permit
+        /// them to be shorter as well.
+        /// </summary>
+        /// <param name="str">The string to clamp.</param>
+        /// <param name="maxLength">The maximum allowed length.</param>
+        /// <returns>The substring.</returns>
+        public static string Clamp(string str, int maxLength) {
+            if (str.Length > maxLength) {
+                return str.Substring(0, maxLength);
+            }
+            else {
+                return str;
+            }
+        }
+        #endregion
     }
 } 

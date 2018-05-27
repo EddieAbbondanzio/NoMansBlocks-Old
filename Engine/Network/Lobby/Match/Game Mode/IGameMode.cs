@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Voxelated.Network.Lobby {
+namespace Voxelated.Network.Lobby.Match {
     /// <summary>
-    /// Represents a game mode for a net lobby
+    /// Various game modes that a NetLobby can 
+    /// play in their matches.
     /// </summary>
     public interface IGameMode {
         #region Properties
@@ -38,6 +39,12 @@ namespace Voxelated.Network.Lobby {
         /// How many teams there are
         /// </summary>
         int TeamCount { get; }
+
+        /// <summary>
+        /// What kind of timer
+        /// to use for the game mode.
+        /// </summary>
+        NetMatchTimerMode TimerMode { get; }
         #endregion
     }
 }

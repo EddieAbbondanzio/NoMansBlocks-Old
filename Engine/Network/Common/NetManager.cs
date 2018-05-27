@@ -129,6 +129,42 @@ namespace Voxelated.Network {
                 netPeer.FlushSendQueue();
             }
         }
+
+        /// <summary>
+        /// Retrieve the server time. If no serer is found,
+        /// 0 is returned.
+        /// </summary>
+        /// <returns>The current NetTime of the server.</returns>
+        public double GetServerTime() {
+            //Server time is always current net time.
+            if (IsServer) {
+                return NetTime.Now;
+            }
+            else if((netPeer?.ConnectionsCount ?? 0) > 0){
+                return netPeer.Connections[0].GetRemoteTime(NetTime.Now);
+            }
+            else {
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Convert a local time into a server time.
+        /// </summary>
+        /// <param name="localTime">The local time to convert.</param>
+        /// <returns>The server time variant.</returns>
+        public double GetServerTime(double localTime) {
+            //When on the server, this already is server time.
+            if (IsServer) {
+                return localTime;
+            }
+            else if ((netPeer?.ConnectionsCount ?? 0) > 0) {
+                return netPeer.Connections[0].GetRemoteTime(localTime);
+            }
+            else {
+                return 0;
+            }
+        }
         #endregion
 
         #region Message Senders
