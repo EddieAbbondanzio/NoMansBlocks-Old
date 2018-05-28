@@ -100,7 +100,7 @@ namespace Voxelated.Serialization {
         /// <param name="bitLength">How many bits long it is.</param>
         public ByteBuffer(byte[] bytes, int startBit, int bitLength) {
             this.bytes = SerializeUtils.GetBytes(bytes, startBit, bitLength);
-            currentIndex = 0;
+            currentIndex = 0;       //This is not a bug. DON'T do: currentIndex = startBit
             currentLength = bitLength;
             IsReadOnly = true;
         }

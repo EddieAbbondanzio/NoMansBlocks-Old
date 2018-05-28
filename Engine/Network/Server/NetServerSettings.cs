@@ -8,26 +8,18 @@ namespace Voxelated.Network {
     /// <summary>
     /// Container for various settings of a server
     /// </summary>
-    public struct NetServerSettings {
-        #region Statics
-        /// <summary>
-        /// Default settings for a game
-        /// server to use.
-        /// </summary>
-        public static NetServerSettings Default = new NetServerSettings("Server", 32, NetPermissions.Player);
-        #endregion
-
+    public sealed class NetServerSettings : NetManagerSettings {
         #region Properties
         /// <summary>
         /// The name of the server
         /// </summary>
-        public string Name { get; private set; }
+        public override string Name { get { return "Server"; } }
 
         /// <summary>
-        /// How many players can be in 
-        /// the server at once.
+        /// The number of players that are allowed to connect
+        /// to the server.
         /// </summary>
-        public int Capacity { get; private set; }
+        public override int ConnectionLimit { get { return connectionLimit; } }
 
         /// <summary>
         /// The permissions level all clients
@@ -36,13 +28,21 @@ namespace Voxelated.Network {
         public NetPermissions DefaultPermissions { get; private set; }
         #endregion
 
+        #region Members
+        /// <summary>
+        /// How many clients can be connected to the server.
+        /// </summary>
+        private int connectionLimit;
+        #endregion
+
         #region Constructor(s)
         /// <summary>
-        /// Create a new settings container for a server.
+        /// Create a new settings list for a server. 
         /// </summary>
-        public NetServerSettings(string name, int cap, NetPermissions defaultPerms) {
-            Name = name;
-            Capacity = cap;
+        /// <param name="playerCapacity">How many players can join in.</param>
+        /// <param name="defaultPerms">The default permissions level given to new joinees.</param>
+        public NetServerSettings(int playerCapacity, NetPermissions defaultPerms) {
+            connectionLimit = playerCapacity;
             DefaultPermissions = defaultPerms;
         }
         #endregion

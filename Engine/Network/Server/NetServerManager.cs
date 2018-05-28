@@ -1,5 +1,4 @@
-﻿using Lidgren.Network;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +11,7 @@ namespace Voxelated.Network {
     /// <summary>
     /// A server instance for the game network.
     /// </summary>
-    public class NetServerManager : NetManager {
+    public sealed class NetServerManager : NetManager {
         #region Properties
         /// <summary>
         /// If the manager is a server. Which a server
@@ -38,9 +37,9 @@ namespace Voxelated.Network {
         /// Create a new network manager for a server with
         /// the following settings.
         /// </summary>
-        /// <param name="serverSettings">The settings for the server to adhere to.</param>
-        public NetServerManager(NetServerSettings serverSettings) : base(NetPermissions.Server) {
-            Settings = serverSettings;
+        /// <param name="settings">The settings for the server to adhere to.</param>
+        public NetServerManager(NetServerSettings settings) : base(new NetServerEventListener(), settings) {
+            Settings = settings;
             ClientManager = new NetClientConnectionManager(this);
         }
         #endregion

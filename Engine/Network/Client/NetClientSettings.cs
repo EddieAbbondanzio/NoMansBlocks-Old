@@ -10,21 +10,34 @@ namespace Voxelated.Network {
     /// but will be expanded upon more
     /// later on.
     /// </summary>
-    public class NetClientSettings {
+    public sealed class NetClientSettings : NetManagerSettings {
         #region Properties
         /// <summary>
         /// The name to use for the players nickname
         /// </summary>
-        public string Name { get; private set; } = string.Empty;
+        public override string Name { get { return name; } }
+
+        /// <summary>
+        /// Clients only allow for 1 connection (the server).
+        /// </summary>
+        public override int ConnectionLimit { get { return 1; } }
+        #endregion
+
+        #region Members
+        /// <summary>
+        /// The name of the client. Other players
+        /// will see this.
+        /// </summary>
+        private string name;
         #endregion
 
         #region Constructor(s)
         /// <summary>
-        /// Create a new instance of the settings
-        /// for the client.
+        /// Settings to use for the network client.
         /// </summary>
+        /// <param name="name">The name to play under.</param>
         public NetClientSettings(string name) {
-            Name = name;
+            this.name = name;
         }
         #endregion
     }

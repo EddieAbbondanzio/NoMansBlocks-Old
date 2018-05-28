@@ -1,4 +1,4 @@
-﻿using Lidgren.Network;
+﻿using LiteNetLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace Voxelated.Network {
     /// A client instance for the game network. Allows
     /// player to communicate with the server.
     /// </summary>
-    public class NetClientManager : NetManager {
+    public sealed class NetClientManager : NetManager {
         #region Properties
         /// <summary>
         /// If the client is a server. Which is never
@@ -36,7 +36,7 @@ namespace Voxelated.Network {
         /// with the pre-defined permissions level.
         /// </summary>
         /// <param name="settings">The settings for the manager to follow.</param>
-        public NetClientManager(NetClientSettings settings) : base(NetPermissions.Player) {
+        public NetClientManager(NetClientSettings settings) : base(new NetClientEventListener(), settings) {
             Settings = settings;
         }
         #endregion
@@ -47,37 +47,23 @@ namespace Voxelated.Network {
         /// the player name.
         /// </summary>
         /// <param name="serverAddress">The server's ip address.</param>
-        public void Connect(IPEndPoint serverAddress) {
-            //Set up the configuration.
-            var config = new NetPeerConfiguration("Voxelated") {
-                //SimulatedMinimumLatency = 0.2f,
-                //SimulatedLoss = 0.1f
-                MaximumConnections = 1,
-                AutoFlushSendQueue = false
-            };
-
-            config.EnableMessageType(NetIncomingMessageType.UnconnectedData);
-            config.DisableMessageType(NetIncomingMessageType.ConnectionApproval);
-
-            //Get the client going.
-            netPeer = new NetClient(config);
-            netPeer.Start();
-
-            NetOutgoingMessage hailMsg = netPeer.CreateMessage();
-            hailMsg.Write(Settings.Name);
+        public void Connect(NetEndPoint serverAddress) {
+            netManager.Start();
 
             LoggerUtils.Log("NetClientManager: Connecting to server at + " + serverAddress.ToString(), LogLevel.Release);
-            netPeer.Connect(serverAddress, hailMsg);
+            netManager.Connect(serverAddress);
         }
 
         /// <summary>
         /// Disconnect from the server, if connected to any...
         /// </summary>
         public void Disconnect() {
-            if (netPeer != null) {
+            if (netManager != null) {
                 LoggerUtils.Log("NetClientManager: Disconnecting from server.", LogLevel.Release);
-                netPeer.Shutdown("Bye!");
 
+                netManager.Stop();
+                netEventListener = null;
+                netManager = null;
                 Lobby = null;
             }
         }
@@ -85,19 +71,19 @@ namespace Voxelated.Network {
 
         #region Overrides
         /// <summary>
-        /// Send a message over the network. It encodes the message into
+        /// Send a message over the network to the server. It encodes the message into
         /// a NetOutGoingMessage through lidgren.
         /// </summary>
         /// <param name="message">The message to send out.</param>
         /// <param name="method">What method to send it over the wire.</param>
-        /// <param name="channel">The channel to send it on.</param>
-        public override void SendMessage(NetMessage message, NetDeliveryMethod method, NetChannel channel) {
-            NetOutgoingMessage outMsg = netPeer.CreateMessage();
-            outMsg.Write(message.Serialize());
+        public override void SendMessage(NetMessage message, SendOptions method) {
+            byte[] bytes = message?.Serialize();
 
-            if (outMsg != null && netPeer != null) {
-                LoggerUtils.Log("NetClient: Sending message of type: " + message.Type);
-                netPeer.SendMessage(outMsg, netPeer.Connections, method, (int)channel);
+            if(bytes != null && netManager.PeersCount > 0) {
+                netManager.GetFirstPeer().Send(bytes, method);
+            }
+            else {
+                LoggerUtils.LogWarning("NetClientManager: Unable to send message to server.");
             }
         }
         #endregion
