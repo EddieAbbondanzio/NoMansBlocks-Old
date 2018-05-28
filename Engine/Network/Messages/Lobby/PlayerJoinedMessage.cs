@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Lidgren.Network;
 using Voxelated.Network.Lobby;
 using Voxelated.Utilities;
+using LiteNetLib;
+using LiteNetLib.Utils;
 
 namespace Voxelated.Network.Messages {
     /// <summary>
@@ -67,7 +68,7 @@ namespace Voxelated.Network.Messages {
         /// the network
         /// </summary>
         /// <param name="inMsg">The lidgren message with the joined message in it.</param>
-        public PlayerJoinedMessage(NetIncomingMessage inMsg) : base(inMsg) {
+        public PlayerJoinedMessage(NetPeer sender, NetDataReader reader) : base(sender, reader) {
             PlayerId = buffer.ReadByte();
             PlayerName = buffer.ReadString();
         }

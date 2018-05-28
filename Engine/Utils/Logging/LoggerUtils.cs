@@ -21,7 +21,7 @@ namespace Voxelated.Utilities {
         private sealed class Destructor {
             ~Destructor() {
                 if (profile.SaveToFile) {
-                    NetManager.OnInfoMessage -= LogInfoMessage;
+                    NetMessageListener.OnInfoMessage -= LogInfoMessage;
                     SaveLogFile();
                 }
             }
@@ -90,7 +90,7 @@ namespace Voxelated.Utilities {
             Messages = new List<string>();
             destructor = new Destructor();
 
-            NetManager.OnInfoMessage += LogInfoMessage;
+            NetMessageListener.OnInfoMessage += LogInfoMessage;
         }
         #endregion
 
@@ -184,6 +184,18 @@ namespace Voxelated.Utilities {
         }
 
         /// <summary>
+        /// Log a message to console only if the condition is true.
+        /// </summary>
+        /// <param name="message">The message to print.</param>
+        /// <param name="level">What level of debug it should log at.</param>
+        /// <param name="condition">The condition to check first.</param>
+        public static void ConditionalLog(string message, LogLevel level, bool condition) {
+            if (condition) {
+                Log(message, level);
+            }
+        }
+
+        /// <summary>
         /// Log a message to console and to the log file.
         /// </summary>
         public static void Log(string message, Color16 color, LogLevel level = LogLevel.Debug) {
@@ -207,6 +219,8 @@ namespace Voxelated.Utilities {
                 }
             }
         }
+
+
 
         /// <summary>
         /// Clear the console of any pre-existing text.

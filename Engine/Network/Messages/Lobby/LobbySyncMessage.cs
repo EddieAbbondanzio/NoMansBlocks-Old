@@ -1,5 +1,4 @@
-﻿using Lidgren.Network;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +6,8 @@ using System.Threading.Tasks;
 using Voxelated.Network.Lobby;
 using Voxelated.Network.Lobby.Match;
 using Voxelated.Utilities;
+using LiteNetLib;
+using LiteNetLib.Utils;
 
 namespace Voxelated.Network.Messages {
     /// <summary>
@@ -55,7 +56,7 @@ namespace Voxelated.Network.Messages {
         /// Decode an incoming lobby sync message  that
         /// was recieved.
         /// </summary>
-        public LobbySyncMessage(NetIncomingMessage inMsg) : base(inMsg) {
+        public LobbySyncMessage(NetPeer sender, NetDataReader reader) : base(sender, reader) {
             PlayerId = buffer.ReadByte();
             //Pull in the player info.
             Players = new List<NetPlayer>();

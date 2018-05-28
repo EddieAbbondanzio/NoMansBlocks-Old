@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Voxelated.Network;
 using Voxelated.Network.Lobby;
+using Voxelated.Network.Server;
 using Voxelated.Utilities;
 
 namespace Voxelated.Engine.Console.Commands {
@@ -60,7 +61,8 @@ namespace Voxelated.Engine.Console.Commands {
 
             if(server != null) {
                 string name = arguments[0].Trim();
-                server.ClientManager.KickConnectionByPlayerName(name);
+                string reason = arguments.Length == 2 ? arguments[1] : "";
+                server.ConnectionHandler.KickConnectionByPlayerName(name, reason);
             }
         }
         #endregion

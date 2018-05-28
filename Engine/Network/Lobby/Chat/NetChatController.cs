@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Voxelated.Network.Messages;
 using Voxelated.Utilities;
+using LiteNetLib;
+using Voxelated.Network.Server;
 
 namespace Voxelated.Network.Lobby {
     /// <summary>
@@ -42,7 +44,7 @@ namespace Voxelated.Network.Lobby {
             }
 
             //Get player id
-            byte senderId = serverManager.ClientManager.GetPlayerId(lobbyMsg.SenderConnection);
+            byte senderId = serverManager.ConnectionHandler.GetPlayerId(lobbyMsg.Sender);
 
             //Their id wasn't found.
             if(senderId == byte.MaxValue) {
@@ -74,7 +76,7 @@ namespace Voxelated.Network.Lobby {
             }
 
             //Forward it to every client.
-            serverManager.SendMessage(lobbyMsg, Lidgren.Network.NetDeliveryMethod.ReliableOrdered, NetChannel.Chat);
+            serverManager.SendMessage(lobbyMsg, SendOptions.ReliableOrdered);
         }
 
         /// <summary>

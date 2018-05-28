@@ -39,12 +39,6 @@ namespace Voxelated.Network.Lobby.Match {
         /// How many teams there are
         /// </summary>
         int TeamCount { get; }
-
-        /// <summary>
-        /// What kind of timer
-        /// to use for the game mode.
-        /// </summary>
-        NetMatchTimerMode TimerMode { get; }
         #endregion
     }
 }

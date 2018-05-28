@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Voxelated.Engine;
 using Voxelated.Engine.Mesh.Render;
 using Voxelated.Network;
+using Voxelated.Network.Client;
 
 namespace Voxelated {
     /// <summary>

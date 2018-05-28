@@ -1,9 +1,10 @@
-﻿using Lidgren.Network;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net;
+using LiteNetLib;
+using LiteNetLib.Utils;
 
 namespace Voxelated.Network.Messages {
     /// <summary>
@@ -29,15 +30,12 @@ namespace Voxelated.Network.Messages {
 
         #region Constructor(s)
         /// <summary>
-        /// Create a new incoming connection message.
+        /// Create a bew ConnectionRequestMessage to inform
+        /// the server that a new client wishes to connect.
         /// </summary>
-        /// <param name="inMsg">The lidgren in message to
-        /// decode it from.</param>
-        public ConnectionRequestMessage(NetIncomingMessage inMsg) : base(inMsg) {
-            //Validate inputs
-            if (inMsg == null) {
-                throw new ArgumentNullException("inMsg", "Cannot be null!");
-            }
+        /// <param name="sender">The NetPeer of the new client.</param>
+        public ConnectionRequestMessage(NetPeer sender) : base(sender) {
+           
         }
         #endregion
     }

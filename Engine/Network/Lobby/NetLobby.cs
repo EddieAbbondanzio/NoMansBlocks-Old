@@ -1,13 +1,15 @@
-﻿using Lidgren.Network;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Voxelated.Network.Lobby;
+using Voxelated.Network.Client;
 using Voxelated.Network.Messages;
 using Voxelated.Utilities;
 using Voxelated.Serialization;
+using LiteNetLib;
+using Voxelated.Network.Server;
 
 namespace Voxelated.Network.Lobby {
     /// <summary>
@@ -63,8 +65,8 @@ namespace Voxelated.Network.Lobby {
             Players      = new List<NetPlayer>();
             ChatMessager = new NetChatMessager(netManager);
 
-            NetManager.OnLobbyMessage      += OnLobbyMessage;
-            NetManager.OnConnectionMessage += OnConnectionMessage;
+            NetMessageListener.OnLobbyMessage      += OnLobbyMessage;
+            NetMessageListener.OnConnectionMessage += OnConnectionMessage;
         }
 
         /// <summary>
@@ -72,8 +74,8 @@ namespace Voxelated.Network.Lobby {
         /// subscriptions to prevent a memory leak.
         /// </summary>
         ~NetLobby() {
-            NetManager.OnLobbyMessage      -= OnLobbyMessage;
-            NetManager.OnConnectionMessage -= OnConnectionMessage;
+            NetMessageListener.OnLobbyMessage      -= OnLobbyMessage;
+            NetMessageListener.OnConnectionMessage -= OnConnectionMessage;
         }
         #endregion
 
@@ -124,18 +126,18 @@ namespace Voxelated.Network.Lobby {
         /// <param name="sender">Always null.</param>
         /// <param name="e">THe message recieved</param>
         private void OnConnectionMessage(object sender, NetMessageArgs e) {
-            if(e.Message.Type == NetMessageType.Disconnected) {
-                DisconnectedMessage disconnectedMsg = e.Message as DisconnectedMessage;
-                LoggerUtils.Log("Disconnected from the server. Reason: " + disconnectedMsg?.Reason);
+            //if(e.Message.Type == NetMessageType.Disconnected) {
+            //    DisconnectedMessage disconnectedMsg = e.Message as DisconnectedMessage;
+            //    LoggerUtils.Log("Disconnected from the server. Reason: " + disconnectedMsg?.Reason);
 
-                //Empty out the player list, and re add local
-                Players.Clear();
-                Players.Add(localPlayer);
+            //    //Empty out the player list, and re add local
+            //    Players.Clear();
+            //    Players.Add(localPlayer);
 
-                //Reset player name
-                NetClientManager clientManager = netManager as NetClientManager;
-                localPlayer.NickName = clientManager.Settings.Name;
-            }
+            //    //Reset player name
+            //    NetClientManager clientManager = netManager as NetClientManager;
+            //    localPlayer.NickName = clientManager.Settings.Name;
+            //}
         }
         #endregion
 
@@ -170,12 +172,12 @@ namespace Voxelated.Network.Lobby {
             //If other clients exist, send them an alert of the new player.
             if (PlayerCount > 1) {
                 PlayerJoinedMessage playerJoinedMsg = new PlayerJoinedMessage(playerId, uniqueName);
-                netManager.SendMessage(playerJoinedMsg, NetDeliveryMethod.ReliableOrdered, NetChannel.Lobby);
+                netManager.SendMessage(playerJoinedMsg, SendOptions.ReliableOrdered);
             }
 
             //Send the new client the lobby sync message
             LobbySyncMessage syncMsg = new LobbySyncMessage(playerId, this);
-            netManager.SendMessage(syncMsg, client.Connection, NetDeliveryMethod.ReliableOrdered, NetChannel.Lobby);
+            netManager.SendMessage(syncMsg, client.Peer, SendOptions.ReliableOrdered);
         }
 
         /// <summary>
@@ -196,7 +198,7 @@ namespace Voxelated.Network.Lobby {
 
                 if (Players.Count > 0) {
                     PlayerLeftMessage playerLeftMsg = new PlayerLeftMessage(client.PlayerId);
-                    netManager.SendMessage(playerLeftMsg, NetDeliveryMethod.ReliableOrdered, NetChannel.Lobby);
+                    netManager.SendMessage(playerLeftMsg, SendOptions.ReliableOrdered);
                 }
             }
         }

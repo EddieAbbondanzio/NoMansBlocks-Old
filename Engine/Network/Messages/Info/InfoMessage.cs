@@ -1,4 +1,4 @@
-﻿using Lidgren.Network;
+﻿using LiteNetLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,8 +35,13 @@ namespace Voxelated.Network.Messages {
         /// <summary>
         /// Decode a recieved info message.
         /// </summary>
-        public InfoMessage(NetIncomingMessage inMsg) : base(inMsg) {
-            Information = inMsg.ReadString();
+        public InfoMessage(NetEndPoint senderIP, int errorCode) : base() {
+            if(senderIP != null) {
+                Information = "NetError from sender: " + senderIP.ToString() + " code: " + errorCode;
+            }
+            else {
+                Information = "NetError code: " + errorCode;
+            }
         }
         #endregion
     }

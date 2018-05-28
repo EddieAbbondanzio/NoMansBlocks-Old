@@ -11,7 +11,7 @@ namespace Voxelated.Network {
     public sealed class NetServerSettings : NetManagerSettings {
         #region Properties
         /// <summary>
-        /// The name of the server
+        /// The chat name of the server
         /// </summary>
         public override string Name { get { return "Server"; } }
 
@@ -26,6 +26,16 @@ namespace Voxelated.Network {
         /// are given by default.
         /// </summary>
         public NetPermissions DefaultPermissions { get; private set; }
+
+        /// <summary>
+        /// The name of the server. Visible to the client.
+        /// </summary>
+        public string ServerName { get; private set; }
+
+        /// <summary>
+        /// The text description of the server.
+        /// </summary>
+        public string ServerDescription { get; private set; }
         #endregion
 
         #region Members
@@ -39,9 +49,13 @@ namespace Voxelated.Network {
         /// <summary>
         /// Create a new settings list for a server. 
         /// </summary>
+        /// <param name="serverName">The text name that will be shown to the client when connecting.</param>
+        /// <param name="serverDescription">The description that the client will see when joining.</param>
         /// <param name="playerCapacity">How many players can join in.</param>
         /// <param name="defaultPerms">The default permissions level given to new joinees.</param>
-        public NetServerSettings(int playerCapacity, NetPermissions defaultPerms) {
+        public NetServerSettings(string serverName, string serverDescription, int playerCapacity, NetPermissions defaultPerms) {
+            ServerName = serverName;
+            ServerDescription = serverDescription;
             connectionLimit = playerCapacity;
             DefaultPermissions = defaultPerms;
         }

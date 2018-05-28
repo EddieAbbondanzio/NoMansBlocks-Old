@@ -1,10 +1,11 @@
-﻿using Lidgren.Network;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Voxelated.Network.Lobby;
+using LiteNetLib;
+using LiteNetLib.Utils;
 
 namespace Voxelated.Network.Messages {
     /// <summary>
@@ -64,7 +65,7 @@ namespace Voxelated.Network.Messages {
         /// Rebuild an incoming team chat message.
         /// </summary>
         /// <param name="inMsg">The message it arrived on.</param>
-        public TeamChatMessage(NetIncomingMessage inMsg) : base(inMsg) {
+        public TeamChatMessage(NetPeer sender, NetDataReader reader) : base(sender, reader) {
             Team       = (NetTeamColor)buffer.ReadByte();
             SenderName = buffer.ReadString();
             Message    = buffer.ReadString();

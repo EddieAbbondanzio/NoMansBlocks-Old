@@ -10,65 +10,71 @@ namespace LiteNetLib
     /// </summary>
     public sealed class NetEndPoint
     {
+        #region Properties
+        /// <summary>
+        /// The entire address conerted into a string.
+        /// </summary>
         public string Host { get { return EndPoint.Address.ToString(); } }
+
+        /// <summary>
+        /// The port at the end of the address.
+        /// </summary>
         public int Port { get { return EndPoint.Port; } }
+        #endregion
 
+        #region Members
+        /// <summary>
+        /// The ip address at the core of the NetEndPoint.
+        /// </summary>
         internal readonly IPEndPoint EndPoint;
+        #endregion
 
-        internal NetEndPoint(IPEndPoint ipEndPoint)
-        {
-            EndPoint = ipEndPoint;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (!(obj is NetEndPoint))
-            {
-                return false;
-            }
-            return EndPoint.Equals(((NetEndPoint)obj).EndPoint);
-        }
-
-        public override string ToString()
-        {
-            return EndPoint.ToString();
-        }
-
-        public override int GetHashCode()
-        {
-            return EndPoint.GetHashCode();
-        }
-
-        public NetEndPoint(string hostStr, int port)
-        {
+        #region Constructor(s)
+        public NetEndPoint(string hostStr, int port) {
             IPAddress ipAddress;
-            if (!IPAddress.TryParse(hostStr, out ipAddress))
-            {
-                if (NetSocket.IPv6Support)
-                {
-                    if (hostStr == "localhost")
-                    {
+            if (!IPAddress.TryParse(hostStr, out ipAddress)) {
+                if (NetSocket.IPv6Support) {
+                    if (hostStr == "localhost") {
                         ipAddress = IPAddress.IPv6Loopback;
                     }
-                    else
-                    {
+                    else {
                         ipAddress = ResolveAddress(hostStr, AddressFamily.InterNetworkV6);
                     }
                 }
-                if (ipAddress == null)
-                {
+                if (ipAddress == null) {
                     ipAddress = ResolveAddress(hostStr, AddressFamily.InterNetwork);
                 }
             }
-            if (ipAddress == null)
-            {
+            if (ipAddress == null) {
                 throw new Exception("Invalid address: " + hostStr);
             }
             EndPoint = new IPEndPoint(ipAddress, port);
         }
 
-        private IPAddress ResolveAddress(string hostStr, AddressFamily addressFamily)
-        {
+        internal NetEndPoint(IPEndPoint ipEndPoint) {
+            EndPoint = ipEndPoint;
+        }
+        #endregion
+
+        #region Publics
+        public override bool Equals(object obj) {
+            if (!(obj is NetEndPoint)) {
+                return false;
+            }
+            return EndPoint.Equals(((NetEndPoint)obj).EndPoint);
+        }
+
+        public override string ToString() {
+            return EndPoint.ToString();
+        }
+
+        public override int GetHashCode() {
+            return EndPoint.GetHashCode();
+        }
+        #endregion
+
+        #region Helpers
+        private IPAddress ResolveAddress(string hostStr, AddressFamily addressFamily) {
 #if NETCORE
             var hostTask = Dns.GetHostEntryAsync(hostStr);
             hostTask.Wait();
@@ -76,18 +82,15 @@ namespace LiteNetLib
 #else
             var host = Dns.GetHostEntry(hostStr);
 #endif
-            foreach (IPAddress ip in host.AddressList)
-            {
-                if (ip.AddressFamily == addressFamily)
-                {
+            foreach (IPAddress ip in host.AddressList) {
+                if (ip.AddressFamily == addressFamily) {
                     return ip;
                 }
             }
             return null;
         }
 
-        internal long GetId()
-        {
+        internal long GetId() {
             byte[] addr = EndPoint.Address.GetAddressBytes();
             long id = 0;
 
@@ -115,6 +118,7 @@ namespace LiteNetLib
 
             return id;
         }
+        #endregion
     }
 }
 #else

@@ -9,7 +9,7 @@ using Voxelated.Network.Lobby;
 using Voxelated.Network.Messages;
 using Voxelated.Utilities;
 
-namespace Voxelated.Network {
+namespace Voxelated.Network.Client {
     /// <summary>
     /// A client instance for the game network. Allows
     /// player to communicate with the server.
@@ -27,7 +27,13 @@ namespace Voxelated.Network {
         /// <summary>
         /// The preferred settings of the client.
         /// </summary>
-        public NetClientSettings Settings { get; set; }
+        public NetClientSettings Settings { get; private set; }
+
+        /// <summary>
+        /// Maintains the connection with the server
+        /// for this client.
+        /// </summary>
+        public NetClientConnectionHandler ConnectionHandler { get; private set; }
         #endregion
 
         #region Constructor(s)
@@ -36,8 +42,9 @@ namespace Voxelated.Network {
         /// with the pre-defined permissions level.
         /// </summary>
         /// <param name="settings">The settings for the manager to follow.</param>
-        public NetClientManager(NetClientSettings settings) : base(new NetClientEventListener(), settings) {
+        public NetClientManager(NetClientSettings settings) : base(settings) {
             Settings = settings;
+            ConnectionHandler = new NetClientConnectionHandler(this, netManager);
         }
         #endregion
 
@@ -51,7 +58,8 @@ namespace Voxelated.Network {
             netManager.Start();
 
             LoggerUtils.Log("NetClientManager: Connecting to server at + " + serverAddress.ToString(), LogLevel.Release);
-            netManager.Connect(serverAddress);
+            ConnectionHandler.SendConnectionRequest(serverAddress);
+
         }
 
         /// <summary>
@@ -60,11 +68,7 @@ namespace Voxelated.Network {
         public void Disconnect() {
             if (netManager != null) {
                 LoggerUtils.Log("NetClientManager: Disconnecting from server.", LogLevel.Release);
-
                 netManager.Stop();
-                netEventListener = null;
-                netManager = null;
-                Lobby = null;
             }
         }
         #endregion

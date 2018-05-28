@@ -6,6 +6,7 @@ using UnityEngine;
 using Voxelated;
 using Voxelated.Engine;
 using Voxelated.Network;
+using Voxelated.Network.Client;
 using Voxelated.Network.Messages;
 using Voxelated.Utilities;
 

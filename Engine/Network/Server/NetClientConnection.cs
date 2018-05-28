@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Lidgren.Network;
+using LiteNetLib;
 
-namespace Voxelated.Network {
+namespace Voxelated.Network.Server {
     /// <summary>
     /// Represents the info of a client connected
     /// to the server.
@@ -13,9 +13,10 @@ namespace Voxelated.Network {
     public class NetClientConnection {
         #region Properties
         /// <summary>
-        /// The lidgren netconnection of the client
+        /// The LiteNetLib NetPeer of the client's
+        /// connection to the server.
         /// </summary>
-        public NetConnection Connection { get; private set; }
+        public NetPeer Peer { get; private set; }
 
         /// <summary>
         /// The permissions level of the client. This
@@ -32,12 +33,15 @@ namespace Voxelated.Network {
 
         #region Constructor(s)
         /// <summary>
-        /// Create a new  client connection
-        /// to store data on a specific connected
-        /// client.
+        /// Create a new NetClientConnection with a status of initialied.
+        /// Allows for some additional tracking info on top of the LiteNetLib
+        /// NetPeer class.
         /// </summary>
-        public NetClientConnection(NetConnection connection, NetPermissions permissions, byte playerId) {
-            Connection = connection;
+        /// <param name="peer">The LiteNetLib network peer.</param>
+        /// <param name="permissions">The player permissions of the connection.</param>
+        /// <param name="playerId">The unique player id of the connection.</param>
+        public NetClientConnection(NetPeer peer, NetPermissions permissions, byte playerId) {
+            Peer = peer;
             Permissions = permissions;
             PlayerId = playerId;
         }
@@ -48,7 +52,7 @@ namespace Voxelated.Network {
         /// Convert the connection into a text friendly format.
         /// </summary>
         public override string ToString() {
-            return string.Format("{0}: Player Id: {1} Permissions Level: {2}", Connection.RemoteEndPoint.ToString(), PlayerId, Permissions.ToString());
+            return string.Format("{0}: Player Id: {1} Permissions Level: {2}", Peer.EndPoint.ToString(), PlayerId, Permissions.ToString());
         }
         #endregion
     }

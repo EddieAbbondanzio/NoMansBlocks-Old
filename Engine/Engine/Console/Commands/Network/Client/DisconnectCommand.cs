@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Voxelated.Network;
+using Voxelated.Network.Client;
 using Voxelated.Utilities;
 
 namespace Voxelated.Engine.Console.Commands {

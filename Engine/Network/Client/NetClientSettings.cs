@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Voxelated.Network {
+namespace Voxelated.Network.Client {
     /// <summary>
     /// Right now this only has name
     /// but will be expanded upon more

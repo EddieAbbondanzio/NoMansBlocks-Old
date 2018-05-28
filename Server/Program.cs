@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Voxelated.Network;
 using Voxelated.Network.Messages;
+using Voxelated.Network.Server;
 using Voxelated.Utilities;
 
 namespace Voxelated.Server {

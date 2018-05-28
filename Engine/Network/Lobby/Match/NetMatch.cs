@@ -22,11 +22,6 @@ namespace Voxelated.Network.Lobby.Match {
         public List<NetTeam> Teams { get; private set; }
 
         /// <summary>
-        /// The timer of the match.
-        /// </summary>
-        public NetMatchTimer Timer { get; private set; }
-        
-        /// <summary>
         /// The time according to the server
         /// of when the match began.
         /// </summary>
@@ -50,7 +45,6 @@ namespace Voxelated.Network.Lobby.Match {
         /// playing.
         /// </summary>
         public void StartMatch() {
-            Timer.Start();
         }
 
         /// <summary>
@@ -58,7 +52,6 @@ namespace Voxelated.Network.Lobby.Match {
         /// back to the menu.
         /// </summary>
         public void StopMatch() {
-            Timer.Stop();
         }
         #endregion
     }

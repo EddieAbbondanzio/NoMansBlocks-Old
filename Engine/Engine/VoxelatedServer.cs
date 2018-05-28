@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Voxelated.Engine;
 using Voxelated.Network;
+using Voxelated.Network.Server;
 
 namespace Voxelated {
     /// <summary>
@@ -41,7 +42,7 @@ namespace Voxelated {
         /// of the voxelated game engine
         /// </summary>
         public VoxelatedServer() : base() {
-            NetManager = new NetServerManager(NetServerSettings.Default);
+            NetManager = new NetServerManager(new NetServerSettings("Test Server", "Please Ignore.", 32, NetPermissions.Player));
         }
         #endregion
     }

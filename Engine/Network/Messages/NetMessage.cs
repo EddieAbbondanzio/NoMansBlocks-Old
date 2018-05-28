@@ -1,5 +1,4 @@
-﻿using Lidgren.Network;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +6,10 @@ using System.Threading.Tasks;
 using Voxelated.Network.Messages;
 using Voxelated.Serialization;
 using Voxelated.Utilities;
+using LiteNetLib;
+using LiteNetLib.Utils;
 
-namespace Voxelated.Network {
+namespace Voxelated.Network.Messages {
     /// <summary>
     /// Base class to derive any incoming or outgoing message from
     /// the network. Contains some base data such as sent net time
@@ -29,10 +30,9 @@ namespace Voxelated.Network {
         public abstract NetMessageCategory Category { get; }
 
         /// <summary>
-        /// The network connection of the message sender. Careful
-        /// this can be null if it's a debug or info message.
+        /// The sender of who sent this message.
         /// </summary>
-        public NetConnection SenderConnection { get; protected set; }
+        public NetPeer Sender { get; protected set; }
 
         /// <summary>
         /// If the message was recieved from over the network.
@@ -59,7 +59,7 @@ namespace Voxelated.Network {
         /// Create a new outgoing net message to be sent over the server.
         /// </summary>
         protected NetMessage() {
-            buffer = new ByteBuffer();
+            buffer = new ByteBuffer(40);
 
             //Serialize the header info.
             buffer.Write((byte)Type);
@@ -81,27 +81,35 @@ namespace Voxelated.Network {
         }
 
         /// <summary>
-        /// Create a new incoming message that has a payload.
+        /// Create a new message that was recieved 
+        /// with no data on it.
         /// </summary>
-        /// <param name="inMsg">The lidgren message with the data in it.</param>
-        /// <param name="isReadOnly">If the message can be written to.</param>
-        protected NetMessage(NetIncomingMessage inMsg, bool isReadOnly = true) {
-            if (inMsg.SenderConnection != null) {
-                SenderConnection = inMsg.SenderConnection;
+        /// <param name="sender"></param>
+        protected NetMessage(NetPeer sender) {
+            Sender = sender;
+        }
+
+        /// <summary>
+        /// Read in the content of the new message that was recieved.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="reader"></param>
+        /// <param name="isReadOnly"></param>
+        protected NetMessage(NetPeer sender, NetDataReader reader, bool isReadOnly = true) {
+            //Log who sent it.
+            if(sender != null) {
+                Sender = sender;
             }
 
-            if(inMsg.MessageType == NetIncomingMessageType.Data) {
-                //Get the header bytes. Then figure out how big the message is.
-                byte[] headerBytes = inMsg.PeekBytes(5);
-                int byteCount = SerializeUtils.GetInt(headerBytes, 8);
-
-                //Pull in the message info, then jump past header.
-                //This allows for re-use when resending out messages.
-                buffer = new ByteBuffer(inMsg.ReadBytes(byteCount));
-                buffer.SetPointerIndex(40);
+            try {
+                //Pull in the data of the message.
+                byte[] payload = reader.Data;
+                buffer = new ByteBuffer(payload, isReadOnly);
+                buffer.SetPointerIndex(8);
             }
-
-            IsIncoming = true;
+            catch(Exception e) {
+                LoggerUtils.LogError(e.ToString());
+            }
         }
         #endregion
 
@@ -114,136 +122,17 @@ namespace Voxelated.Network {
         public byte[] Serialize() {
             //If it's an outgoing message, jump back to the header and
             //write the size.
-            if (!IsIncoming) {
-                buffer.SetPointerIndex(8);
-                buffer.Write(buffer.ByteLength);
+            if (!IsIncoming && buffer.PointerIndex != 40) {
+                if(buffer.PointerIndex > 40) {
+                    buffer.SetPointerIndex(8);
+                    buffer.Write(buffer.ByteLength);
+                }
+                else {
+                    buffer.Write((byte)Type);
+                }
             }
 
             return buffer.Serialize();
-        }
-        #endregion
-
-        #region Statics
-        /// <summary>
-        /// Convert an incoming message into a usable NetMessage.
-        /// </summary>
-        /// <param name="inMsg">The message that was recieved
-        /// from over the network.</param>
-        /// <returns>The decoded network message.</returns>
-        public static NetMessage DecodeMessage(NetIncomingMessage inMsg) {
-            try {
-                switch (inMsg.MessageType) {
-                    case NetIncomingMessageType.VerboseDebugMessage:
-                    case NetIncomingMessageType.DebugMessage:
-                    case NetIncomingMessageType.WarningMessage:
-                    case NetIncomingMessageType.ErrorMessage:
-                        return DecodeInfoMessage(inMsg);
-
-                    case NetIncomingMessageType.ConnectionApproval:
-                    case NetIncomingMessageType.StatusChanged:
-                        return DecodeConnectionMessage(inMsg);
-
-                    case NetIncomingMessageType.Data:
-                    case NetIncomingMessageType.UnconnectedData:
-                        return DecodeDataMessage(inMsg);
-
-                    default:
-                        return null;
-                }
-            }
-            catch (Exception e) {
-                LoggerUtils.LogError("NetMessage.DecodeMessage(): " + e.ToString());
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Rebuild an information message that was recieved 
-        /// from over network.
-        /// </summary>
-        /// <param name="inMsg">The message that it was delivered on.</param>
-        /// <returns>The decoded info message. This contains a 
-        /// text based message of some network info.</returns>
-        private static NetMessage DecodeInfoMessage(NetIncomingMessage inMsg) {
-            if(inMsg != null) {
-                return new InfoMessage(inMsg);
-            }
-            else {
-                return null; 
-            }
-        }
-
-        /// <summary>
-        /// Rebuild a connection message such as new client connecting or leaving.
-        /// This is ignored when not server.
-        /// </summary>
-        /// <param name="inMsg">The message that it was delivered on.</param>
-        /// <returns>The decoded connection update message.</returns>
-        private static NetMessage DecodeConnectionMessage(NetIncomingMessage inMsg) {
-            if (inMsg == null) {
-                return null;
-            }
-
-            //New client wants to connect
-            if (inMsg.MessageType == NetIncomingMessageType.ConnectionApproval) {
-                return new ConnectionRequestMessage(inMsg);
-            }
-            //Client has fully connected, or wants to disconnect
-            else if (inMsg.MessageType == NetIncomingMessageType.StatusChanged) {
-                switch ((NetConnectionStatus) inMsg.ReadByte()) {
-                    case NetConnectionStatus.Connected:
-                        if (VoxelatedEngine.Engine.NetManager.IsServer) {
-                            return new ConnectMessage(inMsg);
-                        }
-                        else {
-                            return null;
-                        }
-
-                    case NetConnectionStatus.Disconnected:
-                        if (VoxelatedEngine.Engine.NetManager.IsServer) {
-                            return new DisconnectMessage(inMsg);
-                        }
-                        else {
-                            return new DisconnectedMessage(inMsg);
-                        }
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Decode a data message from the network. These are the important messages
-        /// as they have valuable payloads on them.
-        /// </summary>
-        /// <param name="inMsg">The message it was delivered on.</param>
-        /// <returns>The decoded data message.</retuns>
-        private static NetMessage DecodeDataMessage(NetIncomingMessage inMsg) {
-            if(inMsg == null) {
-                return null;
-            }
-
-            //Pull in header info.
-            NetMessageType msgType = (NetMessageType)inMsg.PeekByte();
-            switch (msgType) {
-                case NetMessageType.LobbyChat:
-                    return new LobbyChatMessage(inMsg);
-
-                case NetMessageType.Command:
-                    return new CommandMessage(inMsg);
-
-                case NetMessageType.LobbySync:
-                    return new LobbySyncMessage(inMsg);
-
-                case NetMessageType.PlayerJoined:
-                    return new PlayerJoinedMessage(inMsg);
-
-                case NetMessageType.PlayerLeft:
-                    return new PlayerLeftMessage(inMsg);
-
-                default:
-                    return null;
-            }
         }
         #endregion
     }

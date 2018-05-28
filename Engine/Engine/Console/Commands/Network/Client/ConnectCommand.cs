@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Voxelated.Network;
 using Voxelated.Utilities;
+using LiteNetLib;
+using Voxelated.Network.Client;
 
 namespace Voxelated.Engine.Console.Commands {
     /// <summary>
@@ -57,11 +59,26 @@ namespace Voxelated.Engine.Console.Commands {
         /// arguments is correct length, base class does that.
         /// </summary>
         protected override void ExecuteCommand(params string[] arguments) {
-            IPEndPoint serverAddress = NetUtils.ParseIPEndPoint(arguments[0]);
+            string[] splitAddress = arguments[0].Split(':');
 
-            if(serverAddress != null) {
-                NetClientManager client = VoxelatedEngine.Engine.NetManager as NetClientManager;
-                client.Connect(serverAddress);
+            if(splitAddress.Length == 2) {
+                int port = 0;
+                
+                if(int.TryParse(splitAddress[1], out port)) {
+                    NetEndPoint serverAddress = new NetEndPoint(splitAddress[0], port);
+
+                    if (serverAddress != null) {
+                        NetClientManager client = VoxelatedEngine.Engine.NetManager as NetClientManager;
+                        //LoggerUtils.Log("Connect to: " + serverAddress.ToString());
+
+                        if(client != null) {
+                            client.Connect(serverAddress);
+                        }
+                        else {
+                            LoggerUtils.LogError("ConnectCommand: NetClient was null.");
+                        }
+                    }
+                }
             }
             else {
                 LoggerUtils.LogError("Unable to parse server address.");

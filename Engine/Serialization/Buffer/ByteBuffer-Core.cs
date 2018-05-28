@@ -32,6 +32,11 @@ namespace Voxelated.Serialization {
         /// The number of bytes in the buffer.
         /// </summary>
         public int ByteLength { get { return bytes.Length; } }
+
+        /// <summary>
+        /// The current position of the pointer (in bits).
+        /// </summary>
+        public int PointerIndex { get { return currentIndex; } }
         #endregion
 
         #region Members

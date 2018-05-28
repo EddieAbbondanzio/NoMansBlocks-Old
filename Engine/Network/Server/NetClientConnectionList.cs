@@ -1,11 +1,11 @@
-﻿using Lidgren.Network;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LiteNetLib;
 
-namespace Voxelated.Network {
+namespace Voxelated.Network.Server {
     /// <summary>
     /// Data structure to hold client connections.
     /// It allows for an O(n) lookup via unique identifier
@@ -15,28 +15,29 @@ namespace Voxelated.Network {
     public class NetClientConnectionList {
         #region Properties
         /// <summary>
-        /// All of the client connections.
+        /// All of the NetPeers of the clients currently
+        /// in the lobby.
         /// </summary>
-        public List<NetConnection> Connections {
+        public List<NetPeer> NetPeers {
             get {
-                return connections;
+                return peers;
             }
         }
 
         /// <summary>
-        /// The number of clients currently in the list.
+        /// The number of clients currently in the lobby.
         /// </summary>
         public int Count {
             get {
-                return connections.Count;
+                return peers.Count;
             }
         }
         #endregion
 
         #region Members
         /// <summary>
-        /// All of the client connections retrievable via their remote
-        /// unique identifier.
+        /// All of the client connections retrievable via their 
+        /// connection id.
         /// </summary>
         private Dictionary<long, NetClientConnection> connectionsByUniqueId;
 
@@ -47,28 +48,28 @@ namespace Voxelated.Network {
         private Dictionary<byte, NetClientConnection> connectionsByPlayerId;
 
         /// <summary>
-        /// The collection of lidgren network connections.
+        /// The list of LiteNetLib NetPeers for every client.
         /// </summary>
-        private List<NetConnection> connections;
+        private List<NetPeer> peers;
         #endregion
 
         #region Constructor(s)
         /// <summary>
-        /// Create a new container to hold client
-        /// connections.
+        /// Create a new empty client connection list.
         /// </summary>
         public NetClientConnectionList() {
             connectionsByUniqueId = new Dictionary<long, NetClientConnection>();
             connectionsByPlayerId = new Dictionary<byte, NetClientConnection>();
-            connections = new List<NetConnection>();
+            peers = new List<NetPeer>();
         }
         #endregion
 
         #region Publics
         /// <summary>
-        /// Add a new client to the list.
+        /// Add a new client's connection to the connection
+        /// list.
         /// </summary>
-        /// <param name="connection">The client connection to add.</param>
+        /// <param name="connection">The new client's connection.</param>
         public void Add(NetClientConnection connection) {
             //Ensure a connection was passed first.
             if (connection == null) {
@@ -76,12 +77,12 @@ namespace Voxelated.Network {
             }
 
             //First ensure it's not already in the list.
-            if (!connections.Contains(connection.Connection)) {
+            if (!peers.Contains(connection.Peer)) {
 
                 //Then add it.
-                connectionsByUniqueId.Add(connection.Connection.RemoteUniqueIdentifier, connection);
+                connectionsByUniqueId.Add(connection.Peer.ConnectId, connection);
                 connectionsByPlayerId.Add(connection.PlayerId, connection);
-                connections.Add(connection.Connection);
+                peers.Add(connection.Peer);
             }
         }
 
@@ -96,10 +97,10 @@ namespace Voxelated.Network {
             }
 
             //Try to remove it from the list first.
-            if (connections.Remove(connection.Connection)) {
+            if (peers.Remove(connection.Peer)) {
 
                 //Then remove it from the dictionaries
-                connectionsByUniqueId[connection.Connection.RemoteUniqueIdentifier] = null;
+                connectionsByUniqueId[connection.Peer.ConnectId] = null;
                 connectionsByPlayerId[connection.PlayerId] = null;
             }
         }
@@ -133,7 +134,7 @@ namespace Voxelated.Network {
         /// <param name="id">The unique id to hunt for.</param>
         /// <returns>The connection with the following id. Null if
         /// not found.</returns>
-        public NetClientConnection GetConnectionByUniqueId(long id) {
+        public NetClientConnection GetClientByConnectionId(long id) {
             NetClientConnection connection;
 
             connectionsByUniqueId.TryGetValue(id, out connection);
@@ -146,7 +147,7 @@ namespace Voxelated.Network {
         /// <param name="id">The player id to hunt for.</param>
         /// <returns>The connection with the following id. Null if
         /// not found.</returns>
-        public NetClientConnection GetConnectionByPlayerId(byte id) {
+        public NetClientConnection GetClientByPlayerId(byte id) {
             NetClientConnection connection;
 
             connectionsByPlayerId.TryGetValue(id, out connection);

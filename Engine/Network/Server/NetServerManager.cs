@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using Voxelated.Utilities;
 using Voxelated.Network.Messages;
 using Voxelated.Network.Lobby;
+using LiteNetLib;
 
-namespace Voxelated.Network {
+namespace Voxelated.Network.Server {
     /// <summary>
     /// A server instance for the game network.
     /// </summary>
@@ -29,7 +30,7 @@ namespace Voxelated.Network {
         /// <summary>
         /// The active clients and their connections.
         /// </summary>
-        public NetClientConnectionManager ClientManager { get; private set; }
+        public NetServerConnectionHandler ConnectionHandler { get; private set; }
         #endregion
 
         #region Constructor(s)
@@ -38,9 +39,9 @@ namespace Voxelated.Network {
         /// the following settings.
         /// </summary>
         /// <param name="settings">The settings for the server to adhere to.</param>
-        public NetServerManager(NetServerSettings settings) : base(new NetServerEventListener(), settings) {
+        public NetServerManager(NetServerSettings settings) : base(settings) {
             Settings = settings;
-            ClientManager = new NetClientConnectionManager(this);
+            ConnectionHandler = new NetServerConnectionHandler(this);
         }
         #endregion
 
@@ -49,33 +50,33 @@ namespace Voxelated.Network {
         /// Host a new server.
         /// </summary>
         public void Host() {
-            //Build the configuration
-            var config = new NetPeerConfiguration("Voxelated") {
-                Port = 14242,
-                //SimulatedMinimumLatency = 0.2f,
-                //SimulatedLoss = 0.1f
-                MaximumConnections = Settings.Capacity,
-                AutoFlushSendQueue = false
-            };
-            
-            //These aren't enabled by default. Lame-o!
-            config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
+            if(netManager != null) {
+                LoggerUtils.Log("NetServerManager: Starting new server on port 14242.", LogLevel.Release);
 
-            //Set up the server
-            netPeer = new NetServer(config);
-            netPeer.Start();
+                netManager.Start(14242);
+            }
         }
 
         /// <summary>
         /// Shut down the server.
         /// </summary>
         public void Stop() {
-            if(netPeer != null) {
-                LoggerUtils.Log("NetServerManager: Stopping server...", LogLevel.Debug);
-                netPeer.Shutdown("Bye!");
-                netPeer = null;
+            if(netManager != null) {
+                LoggerUtils.Log("NetServerManager: Stopping server", LogLevel.Release);
 
-                Lobby = null;
+                netManager.Stop();
+            }
+        }
+
+        /// <summary>
+        /// Kick the player from the server.
+        /// </summary>
+        /// <param name="peer">The client to kick.</param>
+        /// <param name="reason">Why they were kicked.</param>
+        public void KickClient(NetPeer peer, string reason) {
+            if(netManager != null) {
+                byte[] message = SerializeUtils.Serialize(reason);
+                netManager.DisconnectPeer(peer, message);
             }
         }
         #endregion
@@ -87,17 +88,14 @@ namespace Voxelated.Network {
         /// <param name="message">The message to send out.</param>
         /// <param name="method">What method to send it over the wire.</param>
         /// <param name="channel">The channel to send it on.</param>
-        public override void SendMessage(NetMessage message, NetDeliveryMethod method, NetChannel channel) {
-            NetOutgoingMessage outMsg = netPeer.CreateMessage();
-            outMsg.Write(message.Serialize());
+        public override void SendMessage(NetMessage message, SendOptions method) {
+            byte[] bytes = message?.Serialize();
 
-            //Don't send messages when no one's listening.
-            if (ClientManager.ConnectionCount() == 0) {
-                return;
+            if(bytes != null && netManager.PeersCount > 0) {
+                netManager.SendToAll(bytes, method);
             }
-
-            if(outMsg != null && netPeer != null) {
-                netPeer.SendMessage(outMsg, ClientManager.GetConnections(), method, (int)channel);
+            else {
+                LoggerUtils.Log("NetServerManager: Unable to send message out.");
             }
         }
         #endregion

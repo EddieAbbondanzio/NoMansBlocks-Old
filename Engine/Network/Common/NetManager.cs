@@ -15,31 +15,6 @@ namespace Voxelated.Network {
     /// away from the NetClient and NetServer of lidgren.
     /// </summary>
     public abstract class NetManager {
-        #region Events
-        /// <summary>
-        /// Server Only. Covers message such as new connection, connection leaving
-        /// or a client wants to conect.
-        /// </summary>
-        public static event EventHandler<NetMessageArgs> OnConnectionMessage;
-
-        /// <summary>
-        /// When a debug or log message is recieved 
-        /// from over the network.
-        /// </summary>
-        public static event EventHandler<NetMessageArgs> OnInfoMessage;
-
-        /// <summary>
-        /// When a lobby message such as player joined or left
-        /// is recieved from over the network.
-        /// </summary>
-        public static event EventHandler<NetMessageArgs> OnLobbyMessage;
-
-        /// <summary>
-        /// WHen a chat message is recieved from the network.
-        /// </summary>
-        public static event EventHandler<NetMessageArgs> OnChatMessage;
-        #endregion
-
         #region Properties
         /// <summary>
         /// If the manager is running as a server,
@@ -52,13 +27,18 @@ namespace Voxelated.Network {
         /// The lobby that the manager is connected to.
         /// </summary>
         public NetLobby Lobby { get; protected set; }
+
+        /// <summary>
+        /// How many connections are currently active on the manager.
+        /// </summary>
+        public int ConnectionCount { get { return netManager?.PeersCount ?? 0; } }
         #endregion
 
         #region Members
         /// <summary>
         /// Allows for listening to the network manager.
         /// </summary>
-        protected EventBasedNetListener netEventListener;
+        public NetMessageListener NetMessageListener;
 
         /// <summary>
         /// The LiteNetLib network peer.
@@ -72,9 +52,9 @@ namespace Voxelated.Network {
         /// functionality between server + client.
         /// </summary>
         /// <param name="settings">Some basic settings to follow.</param>
-        protected NetManager(INetEventListener netEventListener, NetManagerSettings settings) {
-            netManager = new LiteNetLib.NetManager(netEventListener, NetManagerSettings.ConnectionKey);
-            netManager.
+        protected NetManager(NetManagerSettings settings) {
+            NetMessageListener = new NetMessageListener();
+            netManager = new LiteNetLib.NetManager(NetMessageListener, NetManagerSettings.ConnectionKey);
             Lobby = new NetLobby(this);
         }
         #endregion

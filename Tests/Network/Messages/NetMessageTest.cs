@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Voxelated.Network.Messages;
-
 namespace Voxelated.Test.Network {
     /// <summary>
     /// Tests related to NetMessages.

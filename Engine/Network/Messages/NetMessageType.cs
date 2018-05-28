@@ -12,8 +12,8 @@ namespace Voxelated.Network {
     public enum NetMessageType : byte {
         Info,                   //Debug junk...
         ConnectionRequest,      //New client wishing to join
-        Connect,                //Client was approved.
-        Disconnect,             //Client is leaving
+        ConnectionAccepted,
+        ClientGreeting,
         Disconnected,           //Server disconnected you.
         LobbySync,              //Initial lobby recieved message
         PlayerJoined,           //Alert that another player joined lobby

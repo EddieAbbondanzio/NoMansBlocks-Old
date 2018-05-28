@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Lidgren.Network;
 using Voxelated.Engine.Console;
+using LiteNetLib;
+using LiteNetLib.Utils;
 
 namespace Voxelated.Network.Messages {
     /// <summary>
@@ -50,7 +51,7 @@ namespace Voxelated.Network.Messages {
         /// Decode a command message that was recieved
         /// from over the network.
         /// </summary>
-        public CommandMessage(NetIncomingMessage inMsg) : base() {
+        public CommandMessage(NetPeer sender, NetDataReader reader) : base(sender, reader) {
           //  Command = DecodeObject(inMsg) as Command;
         }
         #endregion

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Voxelated.Network.Messages;
 using Voxelated.Utilities;
+using LiteNetLib;
+using Voxelated.Network.Server;
 
 namespace Voxelated.Network.Lobby {
     public class NetChatMessager {
@@ -38,14 +40,14 @@ namespace Voxelated.Network.Lobby {
                 chatController = new NetChatController(netManager as NetServerManager);
             }
 
-            NetManager.OnChatMessage += OnChatMessage;
+            NetMessageListener.OnChatMessage += OnChatMessage;
         }
 
         /// <summary>
         /// Frees up resources when destroying.
         /// </summary>
         ~NetChatMessager() {
-            NetManager.OnChatMessage -= OnChatMessage;
+            NetMessageListener.OnChatMessage -= OnChatMessage;
         }
         #endregion
 
@@ -115,7 +117,7 @@ namespace Voxelated.Network.Lobby {
             }
 
             LobbyChatMessage lobbyMsg = new LobbyChatMessage(ChatName, message);
-            VoxelatedEngine.Engine.NetManager.SendMessage(lobbyMsg, Lidgren.Network.NetDeliveryMethod.ReliableOrdered, NetChannel.Chat);
+            VoxelatedEngine.Engine.NetManager.SendMessage(lobbyMsg, SendOptions.ReliableOrdered);
         }
 
         /// <summary>
@@ -130,7 +132,7 @@ namespace Voxelated.Network.Lobby {
             }
 
             TeamChatMessage teamMsg = new TeamChatMessage(Team, ChatName, message);
-            VoxelatedEngine.Engine.NetManager.SendMessage(teamMsg, Lidgren.Network.NetDeliveryMethod.ReliableOrdered, NetChannel.Chat);
+            VoxelatedEngine.Engine.NetManager.SendMessage(teamMsg, SendOptions.ReliableOrdered);
         }
         #endregion
     }

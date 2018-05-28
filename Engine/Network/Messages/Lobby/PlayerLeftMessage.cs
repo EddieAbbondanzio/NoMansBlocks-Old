@@ -1,9 +1,10 @@
-﻿using Lidgren.Network;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LiteNetLib;
+using LiteNetLib.Utils;
 
 namespace Voxelated.Network.Messages {
     /// <summary>
@@ -53,7 +54,7 @@ namespace Voxelated.Network.Messages {
         /// was recieved from the network.
         /// </summary>
         /// <param name="inMsg">The lidgren message with the left message in it.</param>
-        public PlayerLeftMessage(NetIncomingMessage inMsg) : base(inMsg) {
+        public PlayerLeftMessage(NetPeer sender, NetDataReader reader) : base(sender, reader) {
             PlayerId = buffer.ReadByte();
         }
         #endregion
