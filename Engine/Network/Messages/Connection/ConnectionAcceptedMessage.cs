@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LiteNetLib.Utils;
+using Voxelated.Utilities;
 
 namespace Voxelated.Network.Messages {
     /// <summary>

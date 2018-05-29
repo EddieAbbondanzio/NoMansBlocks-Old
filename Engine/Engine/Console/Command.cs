@@ -54,7 +54,7 @@ namespace Voxelated.Engine.Console {
             }
 
             //Check if the arg count is correct
-            if(arguments.Length != ArgumentCount) {
+            if(arguments.Length < ArgumentCount) {
                 LoggerUtils.LogError("Incorrect number of arguments recieved. The " + Keyword + " command requires " + ArgumentCount);
                 return false;
             }

@@ -20,10 +20,19 @@ namespace Voxelated.Network.Client {
         /// </summary>
         private NetClientManager clientManager;
 
+        /// <summary>
+        /// The LiteNetLib network interface controller.
+        /// </summary>
         private LiteNetLib.NetManager netManager;
         #endregion
 
         #region Constructor(s)
+        /// <summary>
+        /// Create a new NetClientConnectionHandler. This maintains the
+        /// connection to the server, and controls joining + leaving.
+        /// </summary>
+        /// <param name="clientManager"></param>
+        /// <param name="netManager"></param>
         public NetClientConnectionHandler(NetClientManager clientManager, LiteNetLib.NetManager netManager) {
             this.clientManager = clientManager;
             this.netManager = netManager;
@@ -69,6 +78,10 @@ namespace Voxelated.Network.Client {
                     if(disconnectedMsg != null) {
                         LoggerUtils.Log("NetClientConnectionHandler: Server Disconnected", LogLevel.Debug);
                         LoggerUtils.Log("NetClientConnectionHandler: Reason: " + disconnectedMsg.Reason, LogLevel.Debug);
+
+                        if(disconnectedMsg.Message != string.Empty) {
+                            LoggerUtils.Log("NetClientConnectionHandler: Message: " + disconnectedMsg.Message, LogLevel.Debug);
+                        }
                     }
                     break;
             }

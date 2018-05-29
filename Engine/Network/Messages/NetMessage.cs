@@ -59,11 +59,10 @@ namespace Voxelated.Network.Messages {
         /// Create a new outgoing net message to be sent over the server.
         /// </summary>
         protected NetMessage() {
-            buffer = new ByteBuffer(40);
+            buffer = new ByteBuffer(8);
 
-            //Serialize the header info.
+            //Serialize the type.
             buffer.Write((byte)Type);
-            buffer.SkipWritingBits(32);
         }
 
         /// <summary>
@@ -77,7 +76,6 @@ namespace Voxelated.Network.Messages {
 
             //Serialize the header info.
             buffer.Write((byte)Type);
-            buffer.SkipWritingBits(32);
         }
 
         /// <summary>
@@ -102,10 +100,13 @@ namespace Voxelated.Network.Messages {
             }
 
             try {
-                //Pull in the data of the message.
-                byte[] payload = reader.Data;
-                buffer = new ByteBuffer(payload, isReadOnly);
-                buffer.SetPointerIndex(8);
+                //Pull in content if it has any.
+                if ((reader.PeekByte() & 128) == 0) {
+                    //Get content
+                    byte[] bytes = reader.GetRemainingBytes();
+                    buffer = new ByteBuffer(bytes, isReadOnly);
+                    buffer.SetPointerIndex(8);
+                }
             }
             catch(Exception e) {
                 LoggerUtils.LogError(e.ToString());
@@ -120,19 +121,63 @@ namespace Voxelated.Network.Messages {
         /// </summary>
         /// <returns>The encoded message</returns>
         public byte[] Serialize() {
-            //If it's an outgoing message, jump back to the header and
-            //write the size.
-            if (!IsIncoming && buffer.PointerIndex != 40) {
-                if(buffer.PointerIndex > 40) {
-                    buffer.SetPointerIndex(8);
-                    buffer.Write(buffer.ByteLength);
-                }
-                else {
-                    buffer.Write((byte)Type);
-                }
+            if (!IsIncoming && buffer.PointerIndex == 8) {
+                buffer.SetPointerIndex(0);
+                buffer.Write(true); //Bool bit to indicate no data.
             }
 
             return buffer.Serialize();
+        }
+
+        /// <summary>
+        /// Rebuild a message that was sent over the network.
+        /// </summary>
+        /// <param name="sender">The net peer who sent the message</param>
+        /// <param name="reader">The data of the message recieved</param>
+        /// <returns>The decoded net message.</returns>
+        public static NetMessage Deserialize(NetPeer sender, NetDataReader reader) {
+            //Need to remove the bit that signals an empty message first.
+            byte rawType = reader.PeekByte();
+
+            NetMessageType msgType = (NetMessageType)(rawType & 127);
+            LoggerUtils.Log(msgType.ToString());
+            NetMessage netMsg = null;
+
+            switch (msgType) {
+                case NetMessageType.ConnectionRequest:
+                    netMsg = new ConnectionRequestMessage(sender);
+                    break;
+
+                case NetMessageType.ConnectionAccepted:
+                    netMsg = new ConnectionAcceptedMessage(sender, reader);
+                    break;
+
+                case NetMessageType.ClientGreeting:
+                    netMsg = new ClientGreetingMessage(sender, reader);
+                    break;
+
+                case NetMessageType.LobbySync:
+                    netMsg = new LobbySyncMessage(sender, reader);
+                    break;
+
+                case NetMessageType.LobbyChat:
+                    netMsg = new LobbyChatMessage(sender, reader);
+                    break;
+
+                case NetMessageType.Command:
+                    netMsg = new CommandMessage(sender, reader);
+                    break;
+
+                case NetMessageType.PlayerJoined:
+                    netMsg = new PlayerJoinedMessage(sender, reader);
+                    break;
+
+                case NetMessageType.PlayerLeft:
+                    netMsg = new PlayerLeftMessage(sender, reader);
+                    break;
+            }
+
+            return netMsg;
         }
         #endregion
     }

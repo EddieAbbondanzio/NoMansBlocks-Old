@@ -65,8 +65,7 @@ namespace Voxelated.Network.Lobby {
             Players      = new List<NetPlayer>();
             ChatMessager = new NetChatMessager(netManager);
 
-            NetMessageListener.OnLobbyMessage      += OnLobbyMessage;
-            NetMessageListener.OnConnectionMessage += OnConnectionMessage;
+            NetMessageListener.OnLobbyMessage += OnLobbyMessage;
         }
 
         /// <summary>
@@ -74,8 +73,7 @@ namespace Voxelated.Network.Lobby {
         /// subscriptions to prevent a memory leak.
         /// </summary>
         ~NetLobby() {
-            NetMessageListener.OnLobbyMessage      -= OnLobbyMessage;
-            NetMessageListener.OnConnectionMessage -= OnConnectionMessage;
+            NetMessageListener.OnLobbyMessage -= OnLobbyMessage;
         }
         #endregion
 
@@ -119,26 +117,6 @@ namespace Voxelated.Network.Lobby {
             }
         }
 
-        /// <summary>
-        /// Listens for a disconnected message. When one is recieved it resets
-        /// the lobby.
-        /// </summary>
-        /// <param name="sender">Always null.</param>
-        /// <param name="e">THe message recieved</param>
-        private void OnConnectionMessage(object sender, NetMessageArgs e) {
-            //if(e.Message.Type == NetMessageType.Disconnected) {
-            //    DisconnectedMessage disconnectedMsg = e.Message as DisconnectedMessage;
-            //    LoggerUtils.Log("Disconnected from the server. Reason: " + disconnectedMsg?.Reason);
-
-            //    //Empty out the player list, and re add local
-            //    Players.Clear();
-            //    Players.Add(localPlayer);
-
-            //    //Reset player name
-            //    NetClientManager clientManager = netManager as NetClientManager;
-            //    localPlayer.NickName = clientManager.Settings.Name;
-            //}
-        }
         #endregion
 
         #region Publics

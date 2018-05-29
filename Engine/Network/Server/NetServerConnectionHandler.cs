@@ -191,7 +191,7 @@ namespace Voxelated.Network.Server {
         }
 
         /// <summary>
-        /// Get the list of lidgren net connections
+        /// Get the list of LiteNetLib net connections
         /// for all of the clients currently connected to
         /// the network.
         /// </summary>

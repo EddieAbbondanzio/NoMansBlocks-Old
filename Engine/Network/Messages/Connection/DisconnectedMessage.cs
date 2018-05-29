@@ -8,7 +8,12 @@ using LiteNetLib.Utils;
 using Voxelated.Utilities;
 
 namespace Voxelated.Network.Messages {
-    public class DisconnectedMessage  : NetMessage {
+    /// <summary>
+    /// Message to alert a client, or server that a network
+    /// peer has left. This is used by the server to kick
+    /// clients, or by clients to inform server's they left.
+    /// </summary>
+    public class DisconnectedMessage : NetMessage {
         #region Properties
         /// <summary>
         /// The type of message it is.
@@ -45,9 +50,9 @@ namespace Voxelated.Network.Messages {
         public DisconnectedMessage(NetPeer sender, DisconnectInfo info) : base(sender) {
             Reason = info.Reason;
 
-            if(Reason == DisconnectReason.DisconnectPeerCalled && info.AdditionalData.AvailableBytes > 0) {
-                byte[] msgBytes = info.AdditionalData.GetRemainingBytes();
-                Message = SerializeUtils.GetString(msgBytes, 0);
+            //See if there is a kick message.
+            if(Reason == DisconnectReason.RemoteConnectionClose && info.AdditionalData.AvailableBytes > 0) {
+                Message = SerializeUtils.GetString(info.AdditionalData.GetRemainingBytes(), 0);
             }
         }
         #endregion

@@ -61,8 +61,24 @@ namespace Voxelated.Engine.Console.Commands {
 
             if(server != null) {
                 string name = arguments[0].Trim();
-                string reason = arguments.Length == 2 ? arguments[1] : "";
-                server.ConnectionHandler.KickConnectionByPlayerName(name, reason);
+
+                //See if a reason was given
+                if(arguments.Length > 1) {
+                    StringBuilder sb = new StringBuilder();
+                    for(int i = 1; i < arguments.Length; i++) {
+                        sb.Append(arguments[i]);
+
+                        if (i < arguments.Length - 1) {
+                            sb.Append(" ");
+                        }
+                    }
+
+                    string reason = sb.ToString();
+                    server.ConnectionHandler.KickConnectionByPlayerName(name, reason);
+                }
+                else {
+                    server.ConnectionHandler.KickConnectionByPlayerName(name, string.Empty);
+                }
             }
         }
         #endregion

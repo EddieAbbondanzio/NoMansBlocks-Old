@@ -10,9 +10,7 @@ using LiteNetLib;
 
 namespace Voxelated.Network {
     /// <summary>
-    /// Base class for server and client network managers. Requires
-    /// a set of methods to be implemented in them to allow for abstracting
-    /// away from the NetClient and NetServer of lidgren.
+    /// Base class for server and client network managers. 
     /// </summary>
     public abstract class NetManager {
         #region Properties
