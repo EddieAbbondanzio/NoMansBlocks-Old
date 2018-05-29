@@ -19,7 +19,7 @@ namespace Voxelated.Network {
         /// or a client. Just controls handling extra stuff
         /// is all.
         /// </summary>
-        public abstract bool IsServer { get; }
+        public abstract bool IsServer { get; } 
 
         /// <summary>
         /// The lobby that the manager is connected to.
@@ -54,6 +54,7 @@ namespace Voxelated.Network {
             NetMessageListener = new NetMessageListener();
             netManager = new LiteNetLib.NetManager(NetMessageListener, NetManagerSettings.ConnectionKey);
             Lobby = new NetLobby(this);
+
         }
         #endregion
 
