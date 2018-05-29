@@ -13,6 +13,7 @@ using Voxelated.Engine.Mesh;
 using Voxelated.Menus;
 using Voxelated.Engine.Console;
 using Voxelated.Engine;
+using Voxelated.Network.Time;
 
 namespace Voxelated {
     /// <summary>
@@ -43,6 +44,11 @@ namespace Voxelated {
         /// Handles network interaction.
         /// </summary>
         public abstract NetManager NetManager { get; protected set; }
+
+        /// <summary>
+        /// The time of the engine.
+        /// </summary>
+        public NetTime Time { get; protected set; }
         #endregion
 
         #region Properties
@@ -129,6 +135,8 @@ namespace Voxelated {
             //Set up components
             World = new World();
             Console = new CommandConsole();
+            Time = new NetTime();
+
             //Set up the game loop
             Initialize();
         }
@@ -174,6 +182,9 @@ namespace Voxelated {
         /// <param name="netTick">If network message should be sent
         /// out on this update.</param>
         private void Update(float deltaTime, bool netTick) {
+            //Update net time
+            Time.Update(deltaTime);
+
             //See if anything came in from the network
             if (NetManager != null) {
                 NetManager.CheckForMessages();

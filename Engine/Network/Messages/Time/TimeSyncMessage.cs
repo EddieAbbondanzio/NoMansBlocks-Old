@@ -30,15 +30,15 @@ namespace Voxelated.Network.Messages {
         /// The server's time when the time sync
         /// was sent out.
         /// </summary>
-        public DateTime ServerTime { get; private set; }
+        public double ServerTime { get; private set; }
         #endregion
 
         #region Constructor(s)
         /// <summary>
         /// Create a new outgoing time sync message.
         /// </summary>
-        public TimeSyncMessage() : base(64) {
-            ServerTime = DateTime.Now;
+        public TimeSyncMessage(double time) : base(64) {
+            ServerTime = time;
         }
 
         /// <summary>
@@ -47,8 +47,7 @@ namespace Voxelated.Network.Messages {
         /// <param name="sender">The server that sent the message.</param>
         /// <param name="reader">The data of the message.</param>
         public TimeSyncMessage(NetPeer sender, NetDataReader reader) :base (sender, reader) {
-            long ticks = buffer.ReadLong();
-            ServerTime = new DateTime(ticks);
+            ServerTime = buffer.ReadDouble();
         }
         #endregion
     }

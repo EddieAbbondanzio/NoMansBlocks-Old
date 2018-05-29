@@ -28,11 +28,6 @@ namespace Voxelated.Network {
         public NetLobby Lobby { get; protected set; }
 
         /// <summary>
-        /// Synchronized time across the network.
-        /// </summary>
-        public NetTime Time { get; protected set; }
-
-        /// <summary>
         /// How many connections are currently active on the manager.
         /// </summary>
         public int ConnectionCount { get { return netManager?.PeersCount ?? 0; } }

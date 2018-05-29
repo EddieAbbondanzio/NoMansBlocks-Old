@@ -28,6 +28,13 @@ namespace Voxelated.Network.Messages {
 
         #region Constructor(s)
         /// <summary>
+        /// Create a new outgoing time sync request message.
+        /// </summary>
+        public TimeSyncRequestMessage() : base() {
+
+        }
+
+        /// <summary>
         /// Decode an incoming time sync request message. No payload
         /// as there's nothing to send in.
         /// </summary>
