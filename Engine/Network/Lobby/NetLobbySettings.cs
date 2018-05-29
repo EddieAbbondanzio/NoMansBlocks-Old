@@ -43,6 +43,11 @@ namespace Voxelated.Network.Lobby {
         public float IntermissionTime { get; private set; } = 90.0f;
 
         /// <summary>
+        /// If matches should be started automatically.
+        /// </summary>
+        public bool AutoStartMatches { get; private set; } = true;
+
+        /// <summary>
         /// Flag to help identify the object when it's in 
         /// byte format.
         /// </summary>

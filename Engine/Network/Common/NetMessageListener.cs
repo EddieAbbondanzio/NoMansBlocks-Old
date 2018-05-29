@@ -37,6 +37,11 @@ namespace Voxelated.Network {
         /// WHen a chat message is recieved from the network.
         /// </summary>
         public static event EventHandler<NetMessageArgs> OnChatMessage;
+
+        /// <summary>
+        /// Messages related to time syncing.
+        /// </summary>
+        public static event EventHandler<NetMessageArgs> OnTimeMessage;
         #endregion
 
         #region Message Handlers
@@ -122,6 +127,12 @@ namespace Voxelated.Network {
                 case NetMessageCategory.Lobby:
                     if(OnLobbyMessage != null) {
                         OnLobbyMessage(this, new NetMessageArgs(netMsg));
+                    }
+                    break;
+
+                case NetMessageCategory.Time:
+                    if(OnTimeMessage != null) {
+                        OnTimeMessage(this, new NetMessageArgs(netMsg));
                     }
                     break;
 

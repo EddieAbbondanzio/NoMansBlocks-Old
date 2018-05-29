@@ -175,6 +175,14 @@ namespace Voxelated.Network.Messages {
                 case NetMessageType.PlayerLeft:
                     netMsg = new PlayerLeftMessage(sender, reader);
                     break;
+
+                case NetMessageType.TimeSyncRequest:
+                    netMsg = new TimeSyncRequestMessage(sender);
+                    break;
+
+                case NetMessageType.TimeSync:
+                    netMsg = new TimeSyncMessage(sender, reader);
+                    break;
             }
 
             return netMsg;

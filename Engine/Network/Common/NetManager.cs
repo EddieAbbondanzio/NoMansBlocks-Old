@@ -7,6 +7,7 @@ using Voxelated.Utilities;
 using Voxelated.Network.Messages;
 using Voxelated.Network.Lobby;
 using LiteNetLib;
+using Voxelated.Network.Time;
 
 namespace Voxelated.Network {
     /// <summary>
@@ -25,6 +26,11 @@ namespace Voxelated.Network {
         /// The lobby that the manager is connected to.
         /// </summary>
         public NetLobby Lobby { get; protected set; }
+
+        /// <summary>
+        /// Synchronized time across the network.
+        /// </summary>
+        public NetTime Time { get; protected set; }
 
         /// <summary>
         /// How many connections are currently active on the manager.

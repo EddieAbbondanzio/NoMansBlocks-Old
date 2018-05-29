@@ -21,5 +21,7 @@ namespace Voxelated.Network {
         TeamChat,               //Text chat to team members
         LobbyChat,              //Text chat to lobby
         Command,
+        TimeSyncRequest,
+        TimeSync,
     }
 }
