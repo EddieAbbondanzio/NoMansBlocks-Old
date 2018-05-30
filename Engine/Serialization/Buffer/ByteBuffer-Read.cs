@@ -144,10 +144,10 @@ namespace Voxelated.Serialization {
         /// </summary>
         /// <returns>The current bool.</returns>
         public bool ReadBool() {
-            ValidateReadAction(8);
+            ValidateReadAction(1);
 
             bool value = SerializeUtils.GetBool(bytes, currentIndex);
-            currentIndex += 8;
+            currentIndex += 1;
 
             return value;
         }

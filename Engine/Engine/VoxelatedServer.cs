@@ -34,6 +34,22 @@ namespace Voxelated {
         public override VoxelatedSettings Settings {
             get { return VoxelatedSettings.ServerSettings; }
         }
+
+        /// <summary>
+        /// Time manager of the server.
+        /// </summary>
+        protected override Time Time {
+            get {
+                return time;
+            }
+        }
+        #endregion
+
+        #region Members
+        /// <summary>
+        /// The time of the server.
+        /// </summary>
+        private Time time;
         #endregion
 
         #region Constructor(s)
@@ -43,6 +59,7 @@ namespace Voxelated {
         /// </summary>
         public VoxelatedServer() : base() {
             NetManager = new NetServerManager(new NetServerSettings("Test Server", "Please Ignore.", 32, NetPermissions.Player));
+            time = new Time();
         }
         #endregion
     }

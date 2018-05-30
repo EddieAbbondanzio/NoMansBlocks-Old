@@ -95,7 +95,7 @@ namespace Voxelated.Network.Server {
                 netManager.SendToAll(bytes, method);
             }
             else {
-                LoggerUtils.Log("NetServerManager: Unable to send message out.");
+                LoggerUtils.Log("NetServerManager: Unable to send message of type: " + message.Type + " out.");
             }
         }
         #endregion

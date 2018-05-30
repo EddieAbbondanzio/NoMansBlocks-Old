@@ -86,7 +86,7 @@ namespace Voxelated.Network.Client {
             if(bytes != null && netManager.PeersCount > 0) {
                 netManager.GetFirstPeer().Send(bytes, method);
             }
-            else {
+            else { 
                 LoggerUtils.LogWarning("NetClientManager: Unable to send message to server.");
             }
         }

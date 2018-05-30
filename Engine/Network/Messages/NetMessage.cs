@@ -38,12 +38,6 @@ namespace Voxelated.Network.Messages {
         /// If the message was recieved from over the network.
         /// </summary>
         public bool IsIncoming { get; private set; }
-
-        /// <summary>
-        /// The time according to server time that the message
-        /// was recieved at.
-        /// </summary>
-        public double RecievedTime { get; private set; }
         #endregion
 
         #region Members
@@ -122,7 +116,7 @@ namespace Voxelated.Network.Messages {
         /// <returns>The encoded message</returns>
         public byte[] Serialize() {
             if (!IsIncoming && buffer.PointerIndex == 8) {
-                buffer.SetPointerIndex(0);
+                buffer.SetPointerIndex(7);
                 buffer.Write(true); //Bool bit to indicate no data.
             }
 
@@ -138,9 +132,7 @@ namespace Voxelated.Network.Messages {
         public static NetMessage Deserialize(NetPeer sender, NetDataReader reader) {
             //Need to remove the bit that signals an empty message first.
             byte rawType = reader.PeekByte();
-
             NetMessageType msgType = (NetMessageType)(rawType & 127);
-            LoggerUtils.Log(msgType.ToString());
             NetMessage netMsg = null;
 
             switch (msgType) {
@@ -182,6 +174,9 @@ namespace Voxelated.Network.Messages {
 
                 case NetMessageType.TimeSync:
                     netMsg = new TimeSyncMessage(sender, reader);
+                    break;
+                default:
+                    LoggerUtils.Log("NetMessage: Deserialize(): Bad type: " + msgType);
                     break;
             }
 

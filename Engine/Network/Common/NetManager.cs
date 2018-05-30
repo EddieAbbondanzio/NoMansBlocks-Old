@@ -7,7 +7,6 @@ using Voxelated.Utilities;
 using Voxelated.Network.Messages;
 using Voxelated.Network.Lobby;
 using LiteNetLib;
-using Voxelated.Network.Time;
 
 namespace Voxelated.Network {
     /// <summary>
@@ -97,7 +96,7 @@ namespace Voxelated.Network {
         public void SendMessage(NetMessage message, NetPeer target, SendOptions method) {
             byte[] bytes = message?.Serialize();
 
-            if(bytes != null) {
+            if(bytes != null && target != null) {
                 target.Send(bytes, method);
             }
             else {

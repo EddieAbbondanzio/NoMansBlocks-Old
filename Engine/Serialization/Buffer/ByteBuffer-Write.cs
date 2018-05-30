@@ -153,12 +153,12 @@ namespace Voxelated.Serialization {
         /// </summary>
         /// <param name="value">The bool to write.</param>
         public void Write(bool value) {
-            ValidateWriteAction(8);
+            ValidateWriteAction(1);
 
             byte[] b = SerializeUtils.Serialize(value);
-            BitManipulator.WriteBits(bytes, b, currentIndex, 8);
+            BitManipulator.WriteBits(bytes, b, currentIndex, 1);
 
-            currentIndex += 8;
+            currentIndex += 1;
         }
 
         /// <summary>

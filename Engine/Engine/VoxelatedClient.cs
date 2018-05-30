@@ -43,6 +43,22 @@ namespace Voxelated {
         public override VoxelatedSettings Settings {
             get { return VoxelatedSettings.ClientSettings; }
         }
+
+        /// <summary>
+        /// Time manager of the client.
+        /// </summary>
+        protected override Time Time {
+            get {
+                return time;
+            }
+        }
+        #endregion
+
+        #region Members
+        /// <summary>
+        /// The time of the client.
+        /// </summary>
+        private Time time;
         #endregion
 
         #region Constructor(s)
@@ -57,6 +73,7 @@ namespace Voxelated {
 
             Renderer = meshRenderer;
             NetManager = new NetClientManager(new NetClientSettings("Bert"));
+            time = new Time();
         }
         #endregion
     }

@@ -135,9 +135,6 @@ namespace Voxelated.Network {
                         OnTimeMessage(this, new NetMessageArgs(netMsg));
                     }
                     break;
-
-                default:
-                    break;
             }
         }
 

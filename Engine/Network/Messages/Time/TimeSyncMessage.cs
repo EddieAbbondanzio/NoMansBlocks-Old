@@ -37,8 +37,9 @@ namespace Voxelated.Network.Messages {
         /// <summary>
         /// Create a new outgoing time sync message.
         /// </summary>
-        public TimeSyncMessage(double time) : base(64) {
+        public TimeSyncMessage(double time) : base(72) {
             ServerTime = time;
+            buffer.Write(time);
         }
 
         /// <summary>

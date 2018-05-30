@@ -18,6 +18,11 @@ namespace Voxelated.Network {
         #endregion
 
         #region Constructor(s)
+        /// <summary>
+        /// Create a new set of event arguments
+        /// for a message that was recieved.
+        /// </summary>
+        /// <param name="message">The incoming message.</param>
         public NetMessageArgs(NetMessage message) {
             Message = message;
         }
