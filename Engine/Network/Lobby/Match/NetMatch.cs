@@ -10,6 +10,18 @@ namespace Voxelated.Network.Lobby.Match {
     /// for various game modes and more.
     /// </summary>
     public class NetMatch {
+        #region Events
+        /// <summary>
+        /// When the match begins.
+        /// </summary>
+        public event EventHandler OnStart;
+
+        /// <summary>
+        /// When the match finishes.
+        /// </summary>
+        public event EventHandler OnEnd;
+        #endregion
+
         #region Properties
         /// <summary>
         /// The game mode of the match.

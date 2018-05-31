@@ -34,7 +34,7 @@ namespace Voxelated.Engine.Console.Commands {
         /// The permissions level required to call it.
         /// </summary>
         public override NetPermissions PermissionRequired {
-            get { return NetPermissions.Trusted; }
+            get { return NetPermissions.Moderator; }
         }
 
         /// <summary>

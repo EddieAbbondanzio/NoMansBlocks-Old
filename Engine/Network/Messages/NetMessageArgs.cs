@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Voxelated.Network.Messages;
 
-namespace Voxelated.Network {
+namespace Voxelated.Network.Messages {
     /// <summary>
     /// Arguments to pass a net message through an event
     /// </summary>

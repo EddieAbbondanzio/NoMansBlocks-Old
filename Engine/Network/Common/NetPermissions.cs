@@ -9,9 +9,9 @@ namespace Voxelated.Network {
     /// Controls access to commands.
     /// </summary>
     public enum NetPermissions : byte {
-        Server = 3,
-        Trusted = 2,
-        Player = 1,
-        Guest = 0
+        Server    = 3,
+        Moderator = 2,
+        Player    = 1,
+        Guest     = 0
     }
 }

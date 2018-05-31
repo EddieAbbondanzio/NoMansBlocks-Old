@@ -10,6 +10,7 @@ using Voxelated.Utilities;
 using Voxelated.Serialization;
 using LiteNetLib;
 using Voxelated.Network.Server;
+using Voxelated.Network.Lobby.Match;
 
 namespace Voxelated.Network.Lobby {
     /// <summary>
@@ -38,6 +39,16 @@ namespace Voxelated.Network.Lobby {
         /// time and more.
         /// </summary>
         public NetLobbySettings Settings { get; private set; }
+
+        /// <summary>
+        /// The manager that handles running matches for the lobby.
+        /// </summary>
+        public NetMatchManager MatchManager { get; private set; }
+
+        /// <summary>
+        /// Handles picking matches for the lobby to play.
+        /// </summary>
+        public IMatchSelector MatchSelector { get; private set; }
         #endregion
 
         #region Members
@@ -55,15 +66,34 @@ namespace Voxelated.Network.Lobby {
 
         #region Constructor(s)
         /// <summary>
-        /// Create a new lobby.
+        /// Create a new lobby that adheres to the following settings.
         /// </summary>
-        public NetLobby(NetManager netManager) {
+        /// <param name="netManager">The net manager of the instance.</param>
+        /// <param name="settings">The settings to use for the lobby.</param>
+        public NetLobby(NetManager netManager, NetLobbySettings settings) {
             this.netManager = netManager;
+            Settings = settings;
 
             //Create the new members
             localPlayer = null;
-            Players      = new List<NetPlayer>();
+            Players = new List<NetPlayer>();
             ChatMessager = new NetChatMessager(netManager);
+            MatchManager = new NetMatchManager();
+
+            //Get the match selector.
+            switch (Settings.MatchSelectionMode) {
+                case SelectorMode.Auto:
+                    MatchSelector = new NetMatchGenerator();
+                    break;
+
+                case SelectorMode.Manual:
+                    MatchSelector = new NetMatchBuilder();
+                    break;
+
+                case SelectorMode.Vote:
+                    MatchSelector = new NetMatchVoter();
+                    break;
+            }
 
             NetMessageListener.OnLobbyMessage += OnLobbyMessage;
         }

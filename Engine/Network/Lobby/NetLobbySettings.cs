@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Voxelated.Network.Lobby.Match;
 using Voxelated.Serialization;
 using Voxelated.Utilities;
 
@@ -46,6 +47,11 @@ namespace Voxelated.Network.Lobby {
         /// If matches should be started automatically.
         /// </summary>
         public bool AutoStartMatches { get; private set; } = true;
+
+        /// <summary>
+        /// How matches are picked by the lobby to play.
+        /// </summary>
+        public SelectorMode MatchSelectionMode { get; private set; }
 
         /// <summary>
         /// Flag to help identify the object when it's in 
@@ -93,6 +99,8 @@ namespace Voxelated.Network.Lobby {
             Name             = buffer.ReadString();
             Description      = buffer.ReadString();
             IntermissionTime = buffer.ReadFloat();
+            AutoStartMatches = buffer.ReadBool();
+            
         }
 
         /// <summary>
@@ -106,6 +114,7 @@ namespace Voxelated.Network.Lobby {
             Name             = buffer.ReadString();
             Description      = buffer.ReadString();
             IntermissionTime = buffer.ReadFloat();
+            AutoStartMatches = buffer.ReadBool();
         }
         #endregion
 
@@ -119,6 +128,8 @@ namespace Voxelated.Network.Lobby {
             buffer.Write(Name);
             buffer.Write(Description);
             buffer.Write(IntermissionTime);
+            buffer.Write(AutoStartMatches);
+            buffer.Write((byte)MatchSelectionMode);
         }
         #endregion
     }
