@@ -3,12 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Voxelated.Utilities;
 
 namespace Voxelated.Network {
     /// <summary>
     /// Container for various settings of a server
     /// </summary>
     public sealed class NetServerSettings : NetManagerSettings {
+        #region Constants
+        /// <summary>
+        /// Maximum character length for the name.
+        /// </summary>
+        public const int NameLengthLimit = 24;
+
+        /// <summary>
+        /// Maximum character length for the description.
+        /// </summary>
+        public const int DescriptionLengthLimit = 176;
+        #endregion
+
         #region Properties
         /// <summary>
         /// The chat name of the server
@@ -54,8 +67,8 @@ namespace Voxelated.Network {
         /// <param name="playerCapacity">How many players can join in.</param>
         /// <param name="defaultPerms">The default permissions level given to new joinees.</param>
         public NetServerSettings(string serverName, string serverDescription, int playerCapacity, NetPermissions defaultPerms) {
-            ServerName = serverName;
-            ServerDescription = serverDescription;
+            ServerName = StringUtils.Clamp(serverName, NameLengthLimit);
+            ServerDescription = StringUtils.Clamp(serverDescription, DescriptionLengthLimit);
             connectionLimit = playerCapacity;
             DefaultPermissions = defaultPerms;
         }

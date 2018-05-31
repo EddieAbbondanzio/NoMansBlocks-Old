@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Voxelated.Network.Lobby.Match {
     /// <summary>
-    /// The supported game modes of the engine.
+    /// Indicator of how the teams are set up
+    /// in the game mode.
     /// </summary>
-    [Flags]
-    public enum ObjectiveType : byte {
-        Deathmatch     = 1,
-        CaptureTheFlag = 2,
-        Demolition     = 4,
+    public enum TeamMode {
+        FreeForAll = 0,
+        Dual       = 1,
+        Quad       = 2,
     }
 }
