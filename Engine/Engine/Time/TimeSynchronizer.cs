@@ -7,7 +7,7 @@ using Voxelated.Network;
 using Voxelated.Network.Messages;
 using Voxelated.Utilities;
 
-namespace Voxelated.Engine {
+namespace Voxelated {
     /// <summary>
     /// Handles keeping time synced up with
     /// the network server. (When connected

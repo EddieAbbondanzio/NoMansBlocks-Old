@@ -7,7 +7,7 @@ using Voxelated.Network;
 using Voxelated.Utilities;
 using Voxelated.Network.Messages;
 
-namespace Voxelated.Engine {
+namespace Voxelated {
     /// <summary>
     /// Engine time. Used to sync clients with lobbies and run
     /// physics calculations with.

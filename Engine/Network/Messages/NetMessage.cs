@@ -175,6 +175,9 @@ namespace Voxelated.Network.Messages {
                 case NetMessageType.TimeSync:
                     netMsg = new TimeSyncMessage(sender, reader);
                     break;
+
+
+
                 default:
                     LoggerUtils.Log("NetMessage: Deserialize(): Bad type: " + msgType);
                     break;

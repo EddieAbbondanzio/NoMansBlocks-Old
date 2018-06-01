@@ -15,5 +15,6 @@ namespace Voxelated.Network {
         Lobby      = 2,
         Chat       = 3,
         Time       = 4,
+        Match      = 5,
     }
 }

@@ -7,6 +7,7 @@ using Voxelated.Utilities;
 using Voxelated.Network.Messages;
 using Voxelated.Network.Lobby;
 using LiteNetLib;
+using Voxelated.Network.Lobby.Match;
 
 namespace Voxelated.Network {
     /// <summary>
@@ -53,7 +54,7 @@ namespace Voxelated.Network {
         protected NetManager(NetManagerSettings settings) {
             NetMessageListener = new NetMessageListener();
             netManager = new LiteNetLib.NetManager(NetMessageListener, NetManagerSettings.ConnectionKey);
-            Lobby = new NetLobby(this);
+            Lobby = new NetLobby(this, new NetLobbySettings(IntermissionDuration.Normal, SelectorMode.Vote);
 
         }
         #endregion

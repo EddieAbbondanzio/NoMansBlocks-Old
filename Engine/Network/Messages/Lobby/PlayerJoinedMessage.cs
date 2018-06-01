@@ -64,10 +64,11 @@ namespace Voxelated.Network.Messages {
         }
 
         /// <summary>
-        /// Decode a player joined message that was recieved from
-        /// the network
+        /// Rebuild an incoming player message alert from the
+        /// server.
         /// </summary>
-        /// <param name="inMsg">The lidgren message with the joined message in it.</param>
+        /// <param name="sender">The server.</param>
+        /// <param name="reader">The data of the message.</param>
         public PlayerJoinedMessage(NetPeer sender, NetDataReader reader) : base(sender, reader) {
             PlayerId = buffer.ReadByte();
             PlayerName = buffer.ReadString();

@@ -11,6 +11,7 @@ using Voxelated.Serialization;
 using LiteNetLib;
 using Voxelated.Network.Server;
 using Voxelated.Network.Lobby.Match;
+using Voxelated;
 
 namespace Voxelated.Network.Lobby {
     /// <summary>
@@ -155,6 +156,12 @@ namespace Voxelated.Network.Lobby {
         /// match for the players to play. 
         /// </summary>
         public void StartIntermission() {
+            if (netManager.IsServer) {
+                IntermissionStartMessage intermissionStartMsg = new IntermissionStartMessage(Time.LocalTime, Settings.IntermissionTime);
+
+            }
+
+
             //mark time
             //Send out state sync to clients
             //count down to next phase

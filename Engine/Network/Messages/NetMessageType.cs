@@ -23,5 +23,10 @@ namespace Voxelated.Network.Messages {
         Command             = 10,
         TimeSyncRequest     = 11,
         TimeSync            = 12,
+        IntermissionStart   = 13,
+        MatchSelectionStart = 14,
+        MatchSelected       = 15,
+        MatchStart          = 16,
+        MatchEnd            = 17,
     }
 }

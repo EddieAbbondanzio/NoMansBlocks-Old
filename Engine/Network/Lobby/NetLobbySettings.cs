@@ -19,12 +19,7 @@ namespace Voxelated.Network.Lobby {
         /// How many seconds to wait between games. Defaults out
         /// to 90 seconds.
         /// </summary>
-        public float IntermissionTime { get; private set; } = 90.0f;
-
-        /// <summary>
-        /// If matches should be started automatically.
-        /// </summary>
-        public bool AutoStartMatches { get; private set; } = true;
+        public IntermissionDuration IntermissionTime { get; private set; }
 
         /// <summary>
         /// How matches are picked by the lobby to play.
@@ -42,19 +37,13 @@ namespace Voxelated.Network.Lobby {
 
         #region Constructor(s)
         /// <summary>
-        /// Settings for a networked lobby. Intermission time
-        /// is kept at default.
+        /// Create a new instance of the lobby settings.
         /// </summary>
-        public NetLobbySettings() {
-        }
-
-        /// <summary>
-        /// Settings for a networked lobby with a custom time
-        /// between matches setting.
-        /// </summary>
-        /// <param name="intermissionTime">How long the lobby sits at menu before next match.</param>
-        public NetLobbySettings(float intermissionTime) {
-            IntermissionTime = intermissionTime;
+        /// <param name="intermissionTime">How long between matches.</param>
+        /// <param name="matchSelectionMode">How the next match is picked.</param>
+        public NetLobbySettings(IntermissionDuration intermissionTime, SelectorMode matchSelectionMode) {
+            IntermissionTime   = intermissionTime;
+            MatchSelectionMode = matchSelectionMode;
         }
 
         /// <summary>
@@ -65,9 +54,8 @@ namespace Voxelated.Network.Lobby {
         public NetLobbySettings(byte[] bytes, int startBit) {
             ByteBuffer buffer = GetContent(bytes, startBit, Type);
 
-            IntermissionTime = buffer.ReadFloat();
-            AutoStartMatches = buffer.ReadBool();
-            
+            IntermissionTime   = (IntermissionDuration)buffer.ReadByte();
+            MatchSelectionMode = (SelectorMode)buffer.ReadByte();
         }
 
         /// <summary>
@@ -78,8 +66,8 @@ namespace Voxelated.Network.Lobby {
         public NetLobbySettings(ByteBuffer buffer) {
             buffer.SkipReadingBits(32);
 
-            IntermissionTime = buffer.ReadFloat();
-            AutoStartMatches = buffer.ReadBool();
+            IntermissionTime   = (IntermissionDuration)buffer.ReadByte();
+            MatchSelectionMode = (SelectorMode)buffer.ReadByte();
         }
         #endregion
 
@@ -90,8 +78,7 @@ namespace Voxelated.Network.Lobby {
         /// </summary>
         /// <param name="buffer">The buffer to write to.</param>
         protected override void SerializeContent(ByteBuffer buffer) {
-            buffer.Write(IntermissionTime);
-            buffer.Write(AutoStartMatches);
+            buffer.Write((byte)IntermissionTime);
             buffer.Write((byte)MatchSelectionMode);
         }
         #endregion
