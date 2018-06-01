@@ -151,6 +151,32 @@ namespace Voxelated.Network.Lobby {
 
         #region Publics
         /// <summary>
+        /// Start the intermission before picking a 
+        /// match for the players to play. 
+        /// </summary>
+        public void StartIntermission() {
+            //mark time
+            //Send out state sync to clients
+            //count down to next phase
+        }
+
+        /// <summary>
+        /// Uses the match selector to select a match
+        /// and then load the match on the server and
+        /// get clients ready.
+        /// </summary>
+        public void SelectNextMatch() {
+
+        }
+
+        /// <summary>
+        /// Move the lobby into the match.
+        /// </summary>
+        public void StartMatch() {
+
+        }
+
+        /// <summary>
         /// Add a new client to the lobby. This sends out a sync message to
         /// all other clients to let them know a new player joined.
         /// </summary>

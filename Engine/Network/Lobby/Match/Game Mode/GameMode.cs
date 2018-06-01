@@ -11,10 +11,56 @@ namespace Voxelated.Network.Lobby.Match {
     /// for players to play in lobbies.
     /// </summary>
     public sealed class GameMode {
-        public static GameMode TeamDeathmatch = new GameMode() {
-            Name = "Team Deathmatch",
-            Description = "",
-        };
+        #region Defaults
+        /// <summary>
+        /// Free for all death match.
+        /// </summary>
+        public static GameMode Deathmatch = new GameMode(
+            "Deathmatch",
+            "Free for All. First to reach the score limit by killing others wins.",
+            ObjectiveType.Deathmatch,
+            TeamMode.FreeForAll,
+            0,
+            5000
+            );
+
+        /// <summary>
+        /// Standard Team Death Match found in most first person shooters.
+        /// </summary>
+        public static GameMode TeamDeathmatch = new GameMode(
+            "Team Deathmatch",
+            "Two teams face off against each other. The first team to reach the score limit by killing"
+            + " opponents of the opposite team first wins.",
+            ObjectiveType.Deathmatch,
+            TeamMode.Dual,
+            0,
+            7500
+            );
+        
+        /// <summary>
+        /// Team capture the flag.
+        /// </summary>
+        public static GameMode CaptureTheFlag = new GameMode(
+            "Capture the Flag",
+            "Two teams attempt to capture the other teams flag.",
+            ObjectiveType.CaptureTheFlag,
+            TeamMode.Dual,
+            0,
+            500
+            );
+        
+        /// <summary>
+        /// One round demolition.
+        /// </summary>
+        public static GameMode Demolition = new GameMode(
+            "Demolition",
+            "Face off in an asymetrical game mode where teams take turns playing offense, and defense. Win the game by planting the bomb in the enemies spawn.",
+            ObjectiveType.Demolition,
+            TeamMode.Dual,
+            0,
+            100
+            );
+        #endregion
 
         #region Constants
         /// <summary>
@@ -29,12 +75,6 @@ namespace Voxelated.Network.Lobby.Match {
         #endregion
 
         #region Properties
-        /// <summary>
-        /// If the game mode is a pre-defined, or user
-        /// created one.
-        /// </summary>
-        public bool IsCustom { get; private set; }
-
         /// <summary>
         /// The name of the game mode.
         /// </summary>
@@ -68,13 +108,6 @@ namespace Voxelated.Network.Lobby.Match {
         #endregion
 
         #region Constructor(s)
-        /// <summary>
-        /// Used by this class to create new standard
-        /// game modes.
-        /// </summary>
-        private GameMode() {
-        }
-
         /// <summary>
         /// Allows for creating new game modes.
         /// </summary>

@@ -26,7 +26,7 @@ namespace Voxelated.Network.Lobby.Match {
         /// <summary>
         /// The game mode of the match.
         /// </summary>
-        public IGameMode GameMode { get; private set; }
+        public GameMode GameMode { get; private set; }
 
         /// <summary>
         /// The teams of the lobby.
@@ -37,7 +37,7 @@ namespace Voxelated.Network.Lobby.Match {
         /// The time according to the server
         /// of when the match began.
         /// </summary>
-        public double NetStartTime { get; private set; }
+        public double StartTime { get; private set; }
         #endregion
 
         #region Constructor(s)
@@ -46,7 +46,7 @@ namespace Voxelated.Network.Lobby.Match {
         /// lobby to play in.
         /// </summary>
         /// <param name="gameMode">The game mode of the match.</param>
-        public NetMatch(IGameMode gameMode) {
+        public NetMatch(GameMode gameMode) {
             GameMode = gameMode;
         }
         #endregion
