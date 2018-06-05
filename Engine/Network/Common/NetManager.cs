@@ -54,7 +54,7 @@ namespace Voxelated.Network {
         protected NetManager(NetManagerSettings settings) {
             NetMessageListener = new NetMessageListener();
             netManager = new LiteNetLib.NetManager(NetMessageListener, NetManagerSettings.ConnectionKey);
-            Lobby = new NetLobby(this, new NetLobbySettings(IntermissionDuration.Normal, SelectorMode.Vote);
+            Lobby = new NetLobby(this, new NetLobbySettings(IntermissionDuration.Normal, SelectorMode.Vote));
 
         }
         #endregion

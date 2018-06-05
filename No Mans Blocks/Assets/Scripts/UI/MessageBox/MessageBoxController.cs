@@ -133,7 +133,7 @@ public class MessageBoxController : MonoBehaviour, ITextDisplay  {
     /// </summary>
     private void Update() {
         if(FadeTimer < FadeInterval) {
-            FadeTimer += Time.deltaTime;
+            FadeTimer += UnityEngine.Time.deltaTime;
             float lerpScale = FadeTimer / FadeInterval;
 
             //We are fading in

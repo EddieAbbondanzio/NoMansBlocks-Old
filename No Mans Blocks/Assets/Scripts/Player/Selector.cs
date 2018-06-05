@@ -107,7 +107,7 @@ public class Selector : MonoBehaviour {
 	/// Continue the lerping movement from prevPosition to new Position
 	/// </summary>
 	void UpdateLerping(){
-		lerpTimer += Time.deltaTime;
+		lerpTimer += UnityEngine.Time.deltaTime;
 
 		if (lerpTimer > 1.0f) {
 			lerpTimer = 1.0f;

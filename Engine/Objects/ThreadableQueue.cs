@@ -41,6 +41,17 @@ public class ThreadableQueue<T> {
         this.queue = queue;
         lockObj = new object();
     }
+
+    /// <summary>
+    /// Create a new threadable queue that has the
+    /// contents of the list in it.
+    /// </summary>
+    /// <param name="values">The values to insert into
+    /// the queue.</param>
+    public ThreadableQueue(List<T> values) {
+        this.queue = new Queue<T>(values);
+        lockObj = new object();
+    }
     #endregion
 
     #region Properties
@@ -63,6 +74,18 @@ public class ThreadableQueue<T> {
     public void Enqueue(T value) {
 		lock (lockObj) {
             queue.Enqueue(value);
+        }
+    }
+
+    /// <summary>
+    /// Enqueue the list of objects passed into
+    /// the queue.
+    /// </summary>
+    /// <param name="values">The list to add
+    /// to the queue.</param>
+    public void Enqueue(List<T> values) {
+        lock (lockObj) {
+            values.ForEach(v => queue.Enqueue(v));
         }
     }
 

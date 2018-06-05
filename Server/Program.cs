@@ -31,6 +31,12 @@ namespace Voxelated.Server {
             //Start the engine up
             server.Start();
 
+            Voxelated.ITimer timer = Time.CreateNewTimer(10);
+            LoggerUtils.Log("Created new timer");
+
+            timer.OnTimerFinished += Timer_OnTimerFinished;
+
+
             server.Console.Parse("/host");
 
             //While it's running, keep accepting commands
@@ -38,6 +44,10 @@ namespace Voxelated.Server {
                 string input = Console.ReadLine();
                 server.Console.Parse(input);
             }
+        }
+
+        private static void Timer_OnTimerFinished(object sender, EventArgs e) {
+            LoggerUtils.Log("RING RING");
         }
 
         /// <summary>

@@ -77,6 +77,12 @@ namespace Voxelated {
         /// sending out time syncs for the server.
         /// </summary>
         private TimeSynchronizer timeSyncer;
+
+        /// <summary>
+        /// The factory controller that handles giving out
+        /// and creating new timers for use by the engine.
+        /// </summary>
+        private TimerFactory timerFactory;
         #endregion
 
         #region Constructor(s)
@@ -89,6 +95,7 @@ namespace Voxelated {
 
             instance = this;
             timeSyncer = new TimeSynchronizer(this);
+            timerFactory = new TimerFactory();
         }
         #endregion
 
@@ -104,6 +111,7 @@ namespace Voxelated {
             this.deltaTime = deltaTime;
 
             timeSyncer.Update(deltaTime);
+            timerFactory.Update(deltaTime);
         }
 
         /// <summary>
@@ -114,6 +122,22 @@ namespace Voxelated {
         /// server.</param>
         public void SetServerOffset(double offset) {
             serverOffset = offset;
+        }
+
+        /// <summary>
+        /// Get a new timer from the Time synchronizer
+        /// that is kept synced across the network.
+        /// </summary>
+        /// <param name="duration">How many seconds
+        /// to run the timer for.</param>
+        /// <returns>An interface reference back to the timer.</returns>
+        public static ITimer CreateNewTimer(double duration) {
+            if(instance != null) {
+                return instance.timerFactory.CreateNewTimer(duration);
+            }
+            else {
+                return null;
+            }
         }
         #endregion
     }
