@@ -13,7 +13,7 @@ namespace Voxelated {
     /// the network server. (When connected
     /// to one).
     /// </summary>
-    public class TimeSynchronizer {
+    internal class TimeSynchronizer {
         #region Constants
         /// <summary>
         /// How long to wait between sending out syncs.
@@ -33,6 +33,11 @@ namespace Voxelated {
         private Time time;
 
         /// <summary>
+        /// The manager for handing out timers.
+        /// </summary>
+        private TimerFactory timerFactory;
+
+        /// <summary>
         /// When the time sync was sent.
         /// </summary>
         private double timeSyncSentAt;
@@ -50,9 +55,10 @@ namespace Voxelated {
         /// maintains net time.
         /// </summary>
         /// <param name="time">The time to maintain.</param>
-        public TimeSynchronizer(Time time) {
+        public TimeSynchronizer(Time time, TimerFactory timerFactory) {
             netManager = VoxelatedEngine.Engine.NetManager;
             this.time         = time;
+            this.timerFactory = timerFactory;
             timeSinceLastSync = 0;
             timeSyncSentAt    = 0;
 
@@ -84,7 +90,7 @@ namespace Voxelated {
             switch (e.Message?.Type) {
                 //When a new server is connected to. Send it a time request.
                 case NetMessageType.ConnectionAccepted:
-                    SendSyncRequest();
+                    SendSyncRequest(true);
                     break;
 
                 //Disconnected from server. Wipe offset.
@@ -108,7 +114,6 @@ namespace Voxelated {
                     if (incomingSync != null) {
                         time.SetServerOffset(incomingSync.ServerTime - timeSyncSentAt);
                     }
-
                     break;
 
                 //Client is requesting a time sync message.
@@ -118,6 +123,16 @@ namespace Voxelated {
                         TimeSyncMessage outgoingSync = new TimeSyncMessage(Time.LocalTime);
                         netManager.SendMessage(outgoingSync, msgSender, LiteNetLib.SendOptions.ReliableOrdered);
                     }
+                    break;
+
+                case NetMessageType.NewTimer:
+                    //Server shouldn't be getting these.
+                    if (netManager.IsServer) {
+                        return;
+                    }
+
+
+
                     break;
             }
         }
@@ -129,11 +144,11 @@ namespace Voxelated {
         /// </summary>
         /// <param name="deltaTime">The time that's passed since
         /// the last frame.</param>
-        public void Update(float deltaTime) {
+        public void Update(double deltaTime) {
             timeSinceLastSync += deltaTime;
 
             if(timeSinceLastSync > TimeBetweenSyncs && !netManager.IsServer) {
-                SendSyncRequest();
+                SendSyncRequest(false);
                 timeSinceLastSync = 0;
             }
         }
@@ -141,11 +156,13 @@ namespace Voxelated {
 
         #region Helpers
         /// <summary>
-        /// Send out a sync request for time to the
-        /// server.
+        /// Send out a time sync request message to the server
+        /// so time can be synced up.
         /// </summary>
-        private void SendSyncRequest() {
-            TimeSyncRequestMessage timeReqMsg = new TimeSyncRequestMessage();
+        /// <param name="includeTimers">If the active timers should 
+        /// be returned as well.</param>
+        private void SendSyncRequest(bool includeTimers = false) {
+            TimeSyncRequestMessage timeReqMsg = new TimeSyncRequestMessage(includeTimers);
             netManager.SendMessage(timeReqMsg, LiteNetLib.SendOptions.ReliableOrdered);
 
             //Record when the time sync request was sent.

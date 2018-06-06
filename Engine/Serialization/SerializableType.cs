@@ -15,5 +15,7 @@ namespace Voxelated.Serialization {
         NetPlayerStats = 1,
         NetTeam = 2,
         NetLobbySettings = 3,
+        Timer = 4,
+        TimerFactory = 5,
     }
 }

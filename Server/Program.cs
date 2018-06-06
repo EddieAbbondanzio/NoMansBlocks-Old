@@ -26,16 +26,8 @@ namespace Voxelated.Server {
             LoggerUtils.SetLogProfile(LogProfile.ConsoleDebug);
 
             server = new VoxelatedServer();
-            server.OnStop += OnStop;
-
-            //Start the engine up
             server.Start();
-
-            Voxelated.ITimer timer = Time.CreateNewTimer(10);
-            LoggerUtils.Log("Created new timer");
-
-            timer.OnTimerFinished += Timer_OnTimerFinished;
-
+            server.OnStop += OnStop;
 
             server.Console.Parse("/host");
 
@@ -44,10 +36,6 @@ namespace Voxelated.Server {
                 string input = Console.ReadLine();
                 server.Console.Parse(input);
             }
-        }
-
-        private static void Timer_OnTimerFinished(object sender, EventArgs e) {
-            LoggerUtils.Log("RING RING");
         }
 
         /// <summary>

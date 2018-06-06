@@ -28,5 +28,6 @@ namespace Voxelated.Network.Messages {
         MatchSelected       = 15,
         MatchStart          = 16,
         MatchEnd            = 17,
+        NewTimer            = 18,
     }
 }

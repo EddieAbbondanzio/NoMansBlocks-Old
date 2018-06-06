@@ -94,8 +94,8 @@ namespace Voxelated {
             serverOffset = 0d;
 
             instance = this;
-            timeSyncer = new TimeSynchronizer(this);
             timerFactory = new TimerFactory();
+            timeSyncer = new TimeSynchronizer(this, timerFactory);
         }
         #endregion
 
@@ -106,7 +106,7 @@ namespace Voxelated {
         /// </summary>
         /// <param name="deltaTime">The amount of 
         /// seconds that has passed since the last frame.</param>
-        public void Update(float deltaTime) {
+        public void Update(double deltaTime) {
             localTime += deltaTime;
             this.deltaTime = deltaTime;
 

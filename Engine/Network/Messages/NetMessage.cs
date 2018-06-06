@@ -169,7 +169,7 @@ namespace Voxelated.Network.Messages {
                     break;
 
                 case NetMessageType.TimeSyncRequest:
-                    netMsg = new TimeSyncRequestMessage(sender);
+                    netMsg = new TimeSyncRequestMessage(sender, reader);
                     break;
 
                 case NetMessageType.TimeSync:

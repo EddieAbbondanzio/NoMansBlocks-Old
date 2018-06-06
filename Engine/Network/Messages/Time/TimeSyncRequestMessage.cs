@@ -1,4 +1,5 @@
 ﻿using LiteNetLib;
+using LiteNetLib.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,14 +25,22 @@ namespace Voxelated.Network.Messages {
         public override NetMessageCategory Category {
             get { return NetMessageCategory.Time; }
         }
+
+        /// <summary>
+        /// If the timers of the timer factory
+        /// should be included in the time sync message.
+        /// </summary>
+        public bool IncludeTimers { get; private set; }
         #endregion
 
         #region Constructor(s)
         /// <summary>
         /// Create a new outgoing time sync request message.
         /// </summary>
-        public TimeSyncRequestMessage() : base() {
+        public TimeSyncRequestMessage(bool includeTimers = false) : base() {
+            IncludeTimers = includeTimers;
 
+            buffer.Write(includeTimers);
         }
 
         /// <summary>
@@ -39,7 +48,8 @@ namespace Voxelated.Network.Messages {
         /// as there's nothing to send in.
         /// </summary>
         /// <param name="sender">The client requesting the time sync.</param>
-        public TimeSyncRequestMessage(NetPeer sender) : base(sender) {
+        public TimeSyncRequestMessage(NetPeer sender, NetDataReader reader) : base(sender, reader) {
+            IncludeTimers = buffer.ReadBool();
         }
         #endregion
     }

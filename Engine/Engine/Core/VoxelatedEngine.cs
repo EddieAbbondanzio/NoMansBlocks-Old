@@ -180,7 +180,7 @@ namespace Voxelated {
         /// <param name="deltaTime">Time since the last time.</param>
         /// <param name="netTick">If network message should be sent
         /// out on this update.</param>
-        private void Update(float deltaTime, bool netTick) {
+        private void Update(double deltaTime, bool netTick) {
             if (Time != null) {
                 Time.Update(deltaTime);
             }
@@ -243,7 +243,7 @@ namespace Voxelated {
                     netTick = tickCount == netTickEveryNTicks;
                     tickCount = netTick ? 1 : tickCount + 1;
 
-                    float deltaTime = (float)0.001 * accumulatedTime.Milliseconds;
+                    double deltaTime = (double)0.001 * accumulatedTime.Milliseconds;
 
                     Update(deltaTime, netTick);
                     accumulatedTime -= TargetElapsedTime;
