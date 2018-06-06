@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LiteNetLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,7 @@ namespace Voxelated {
         /// <summary>
         /// Quick reference back to the network manager.
         /// </summary>
-        private NetManager netManager;
+        private Network.NetManager netManager;
 
         /// <summary>
         /// The time of the engine.
@@ -118,21 +119,30 @@ namespace Voxelated {
 
                 //Client is requesting a time sync message.
                 case NetMessageType.TimeSyncRequest:
-                    LiteNetLib.NetPeer msgSender = e.Message.Sender;
-                    if (msgSender != null) {
+                    TimeSyncRequestMessage syncRequest = e.Message as TimeSyncRequestMessage;
+                    NetPeer msgSender = e.Message.Sender;
+
+                    if (syncRequest != null && msgSender != null) {
+                        //First send them a time sync.
                         TimeSyncMessage outgoingSync = new TimeSyncMessage(Time.LocalTime);
-                        netManager.SendMessage(outgoingSync, msgSender, LiteNetLib.SendOptions.ReliableOrdered);
+                        netManager.SendMessage(outgoingSync, msgSender, SendOptions.ReliableOrdered);
+
+                        //Then if they want timers send them too!
+                        if (syncRequest.IncludeTimers) {
+                            ActiveTimersSync timersSync = new ActiveTimersSync(timerFactory);
+                            netManager.SendMessage(timersSync, msgSender, SendOptions.ReliableOrdered);
+                        }
                     }
                     break;
 
-                case NetMessageType.NewTimer:
-                    //Server shouldn't be getting these.
-                    if (netManager.IsServer) {
-                        return;
+                case NetMessageType.ActiveTimersSync:
+                    ActiveTimersSync timersMsg = e.Message as ActiveTimersSync;
+
+                    if(timersMsg != null) {
+                        LoggerUtils.Log("TimeSyncer: recieved active timers msg: ");
+
+                        time.TimerFactory = timersMsg.TimerFactory;
                     }
-
-
-
                     break;
             }
         }

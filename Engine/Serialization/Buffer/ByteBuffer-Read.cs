@@ -221,28 +221,7 @@ namespace Voxelated.Serialization {
         /// </summary>
         /// <returns>The bytes of the ISerializable object at the current bit index.</returns>
         public SerializableObject ReadSerializableObject() {
-            SerializableType objectType = (SerializableType)PeekByte();
-
-            SerializableObject obj = null;
-            switch (objectType) {
-                case SerializableType.NetPlayer:
-                    obj = new NetPlayer(this);
-                    break;
-
-                case SerializableType.NetPlayerStats:
-                    obj = new NetPlayerStats(this);
-                    break;
-
-                case SerializableType.NetTeam:
-                    obj = new NetTeam(this);
-                    break;
-
-                case SerializableType.NetLobbySettings:
-                    obj = new NetLobbySettings(this);
-                    break;
-            }
-
-            return obj;
+            return SerializableObject.RebuildObject(this);
         }
 
         /// <summary>

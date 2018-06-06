@@ -43,6 +43,16 @@ public class ThreadableQueue<T> {
     }
 
     /// <summary>
+    /// Populate a queue with the contents
+    /// of an array.
+    /// </summary>
+    /// <param name="values">The array to put into the queue.</param>
+    public ThreadableQueue(T[] values) {
+        this.queue = new Queue<T>(values);
+        lockObj = new object();
+    }
+
+    /// <summary>
     /// Create a new threadable queue that has the
     /// contents of the list in it.
     /// </summary>

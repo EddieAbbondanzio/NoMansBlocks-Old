@@ -11,11 +11,11 @@ namespace Voxelated.Serialization {
     /// object when serialized as a byte array.
     /// </summary>
     public enum SerializableType : byte {
-        NetPlayer = 0,
-        NetPlayerStats = 1,
-        NetTeam = 2,
+        NetPlayer        = 0,
+        NetPlayerStats   = 1,
+        NetTeam          = 2,
         NetLobbySettings = 3,
-        Timer = 4,
-        TimerFactory = 5,
+        TimerFactory     = 4,
+        Timer            = 5,
     }
 }

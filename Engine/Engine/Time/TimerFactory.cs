@@ -93,13 +93,13 @@ namespace Voxelated {
             /// <param name="duration">How long the timer will run for.</param>
             public Timer(TimerFactory timerFactory, byte id, double duration) {
                 this.timerFactory = timerFactory;
-                Id       = id;
+                Id = id;
                 Duration = duration;
                 TimeRemaining = duration;
-                StartTime     = Time.ServerTime;
-                hasGoneOff    = false;
+                StartTime = Time.ServerTime;
+                hasGoneOff = false;
             }
-     
+
             /// <summary>
             /// Rebuild a timer from it's serialized bytes.
             /// </summary>
@@ -125,6 +125,7 @@ namespace Voxelated {
                 StartTime = buffer.ReadDouble();
                 Duration = buffer.ReadDouble();
                 TimeRemaining = StartTime + Duration - Time.ServerTime;
+
             }
             #endregion
 
@@ -151,6 +152,7 @@ namespace Voxelated {
                 }
                 else if (!hasGoneOff) {
                     hasGoneOff = true;
+                    LoggerUtils.Log("Timer: Timer " + Id + " has finished");
 
                     if (OnTimerFinished != null) {
                         OnTimerFinished(this, null);
@@ -180,7 +182,13 @@ namespace Voxelated {
         #endregion
 
         #region Properties
-
+        /// <summary>
+        /// Flag to identify what it is when serialzied.
+        /// </summary>
+        protected override SerializableType Type {
+            get { return SerializableType.TimerFactory; }
+        }
+        #endregion
 
         #region Members
         /// <summary>
@@ -211,6 +219,59 @@ namespace Voxelated {
                 }
             }
         }
+
+        /// <summary>
+        /// Rebuild the timer factory from a 
+        /// byte array.
+        /// </summary>
+        /// <param name="bytes">The bytes of the factory.</param>
+        /// <param name="startBit">The first bit position of it.</param>
+        public TimerFactory(byte[] bytes, int startBit = 0) {
+            ByteBuffer buffer = GetContent(bytes, startBit, Type);
+
+            byte idCount = buffer.ReadByte();
+            byte[] ids = buffer.ReadBytes(idCount * 8);
+            availableTimerIds = new ThreadableQueue<byte>(ids);
+
+            byte timerCount = buffer.ReadByte();
+            timers = new List<Timer>();
+            for (int t = 0; t < timerCount; t++) {
+                Timer timer = new Timer(buffer);
+
+                if (timer != null) {
+                    timers.Add(timer);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Rebuild the timer factory from it's byte
+        /// buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer containing the factory.</param>
+        public TimerFactory(ByteBuffer buffer) {
+            buffer.SkipReadingBits(32);
+
+            byte idCount = buffer.ReadByte();
+
+            LoggerUtils.Log("BUffer size is: " + buffer.ByteLength + " reading ids: " + idCount);
+            byte[] ids = buffer.ReadBytes(idCount * 8);
+            availableTimerIds = new ThreadableQueue<byte>(ids);
+
+            byte timerCount = buffer.ReadByte();
+            LoggerUtils.Log("timer count is: " + timerCount);
+
+            timers = new List<Timer>();
+            for(int t = 0; t < timerCount; t++) {
+                Timer timer = new Timer(buffer);
+
+                if(timer != null) {
+                    timers.Add(timer);
+                }
+            }
+
+            LoggerUtils.Log("TimerFactory: synced with timer count: " + timerCount);
+        }
         #endregion
 
         #region Publics
@@ -236,7 +297,7 @@ namespace Voxelated {
         /// <param name="deltaTime">How much time has passed
         /// since the last frame.</param>
         public void Update(double deltaTime) {
-            for(int i = 0; i < timers.Count(); i++) {
+            for (int i = 0; i < timers.Count(); i++) {
                 timers[i].Update(deltaTime);
             }
         }
@@ -249,11 +310,28 @@ namespace Voxelated {
         /// </summary>
         /// <param name="timer">The timer to remove.</param>
         private void RemoveTimer(Timer timer) {
-            if(timer != null) {
+            if (timer != null) {
                 availableTimerIds.Enqueue(timer.Id);
                 timers.Remove(timer);
 
                 LoggerUtils.Log("removed timer!");
+            }
+        }
+        #endregion
+
+        #region Serialization
+        /// <summary>
+        /// Writes all the timers to the buffer to later
+        /// rebuild the timer factory.
+        /// </summary>
+        /// <param name="buffer">The buffer to write to.</param>
+        protected override void SerializeContent(ByteBuffer buffer) {
+            buffer.Write((byte)availableTimerIds.Count);
+            buffer.Write(availableTimerIds.ToArray());
+
+            buffer.Write((byte)timers.Count());
+            foreach(Timer timer in timers) {
+                buffer.Write(timer);
             }
         }
         #endregion

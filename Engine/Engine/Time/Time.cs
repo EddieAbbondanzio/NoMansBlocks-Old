@@ -48,6 +48,21 @@ namespace Voxelated {
         }
         #endregion
 
+        #region Properties
+        /// <summary>
+        /// Handles maintaing an up to date
+        /// server time for the client. And
+        /// sending out time syncs for the server.
+        /// </summary>
+        internal TimeSynchronizer TimeSyncer { get; private set; }
+
+        /// <summary>
+        /// The factory controller that handles giving out
+        /// and creating new timers for use by the engine.
+        /// </summary>
+        internal TimerFactory TimerFactory { get; set; }
+        #endregion
+
         #region Members
         /// <summary>
         /// The singleton reference of time.
@@ -70,19 +85,6 @@ namespace Voxelated {
         /// the last frame.
         /// </summary>
         private double deltaTime;
-
-        /// <summary>
-        /// Handles maintaing an up to date
-        /// server time for the client. And
-        /// sending out time syncs for the server.
-        /// </summary>
-        private TimeSynchronizer timeSyncer;
-
-        /// <summary>
-        /// The factory controller that handles giving out
-        /// and creating new timers for use by the engine.
-        /// </summary>
-        private TimerFactory timerFactory;
         #endregion
 
         #region Constructor(s)
@@ -94,8 +96,8 @@ namespace Voxelated {
             serverOffset = 0d;
 
             instance = this;
-            timerFactory = new TimerFactory();
-            timeSyncer = new TimeSynchronizer(this, timerFactory);
+            TimerFactory = new TimerFactory();
+            TimeSyncer = new TimeSynchronizer(this, TimerFactory);
         }
         #endregion
 
@@ -110,8 +112,8 @@ namespace Voxelated {
             localTime += deltaTime;
             this.deltaTime = deltaTime;
 
-            timeSyncer.Update(deltaTime);
-            timerFactory.Update(deltaTime);
+            TimeSyncer.Update(deltaTime);
+            TimerFactory.Update(deltaTime);
         }
 
         /// <summary>
@@ -133,7 +135,7 @@ namespace Voxelated {
         /// <returns>An interface reference back to the timer.</returns>
         public static ITimer CreateNewTimer(double duration) {
             if(instance != null) {
-                return instance.timerFactory.CreateNewTimer(duration);
+                return instance.TimerFactory.CreateNewTimer(duration);
             }
             else {
                 return null;

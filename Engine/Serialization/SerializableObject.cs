@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Voxelated.Network.Lobby;
 using Voxelated.Utilities;
 
 namespace Voxelated.Serialization {
@@ -115,6 +116,41 @@ namespace Voxelated.Serialization {
             //Prep the byte buffer to read from.
             int bitCount = GetByteCount(bytes, startBit) * 8 ;
             return new ByteBuffer(bytes, startBit + 32, bitCount);
+        }
+
+        /// <summary>
+        /// Rebuild a serializable object from it's
+        /// byte array.
+        /// </summary>
+        /// <param name="buffer">The buffer holding the object.</param>
+        /// <returns>The rebuilt object.</returns>
+        public static SerializableObject RebuildObject(ByteBuffer buffer) {
+            SerializableType objectType = (SerializableType)buffer.PeekByte();
+
+            SerializableObject obj = null;
+            switch (objectType) {
+                case SerializableType.NetPlayer:
+                    obj = new NetPlayer(buffer);
+                    break;
+
+                case SerializableType.NetPlayerStats:
+                    obj = new NetPlayerStats(buffer);
+                    break;
+
+                case SerializableType.NetTeam:
+                    obj = new NetTeam(buffer);
+                    break;
+
+                case SerializableType.NetLobbySettings:
+                    obj = new NetLobbySettings(buffer);
+                    break;
+
+                case SerializableType.TimerFactory:
+                    obj = new TimerFactory(buffer);
+                    break;
+            }
+
+            return obj;
         }
         #endregion
     }

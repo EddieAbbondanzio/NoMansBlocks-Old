@@ -29,6 +29,8 @@ namespace Voxelated.Server {
             server.Start();
             server.OnStop += OnStop;
 
+            ITimer testTimer = Time.CreateNewTimer(15.0f);
+
             server.Console.Parse("/host");
 
             //While it's running, keep accepting commands

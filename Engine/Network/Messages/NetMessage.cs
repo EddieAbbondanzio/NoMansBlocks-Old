@@ -176,6 +176,10 @@ namespace Voxelated.Network.Messages {
                     netMsg = new TimeSyncMessage(sender, reader);
                     break;
 
+                case NetMessageType.ActiveTimersSync:
+                    netMsg = new ActiveTimersSync(sender, reader);
+                    break;
+
 
 
                 default:
