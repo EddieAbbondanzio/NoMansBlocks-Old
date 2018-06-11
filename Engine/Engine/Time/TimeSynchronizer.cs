@@ -128,10 +128,10 @@ namespace Voxelated {
                         netManager.SendMessage(outgoingSync, msgSender, SendOptions.ReliableOrdered);
 
                         //Then if they want timers send them too!
-                        if (syncRequest.IncludeTimers) {
-                            ActiveTimersSync timersSync = new ActiveTimersSync(timerFactory);
-                            netManager.SendMessage(timersSync, msgSender, SendOptions.ReliableOrdered);
-                        }
+                        //if (syncRequest.IncludeTimers) {
+                        //    ActiveTimersSync timersSync = new ActiveTimersSync(timerFactory);
+                        //    netManager.SendMessage(timersSync, msgSender, SendOptions.ReliableOrdered);
+                        //}
                     }
                     break;
 
